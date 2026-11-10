@@ -27,17 +27,20 @@ jobs:
           node-version: '20'
 
       - name: Setup Pages
+        id: pages
         uses: actions/configure-pages@v5
         with:
           static_site_generator: next
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build with Next.js
         run: npx next build
         env:
-          NEXT_PUBLIC_BASE_PATH: /Gta6mod
+          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path || '/Gta6mod' }}
+          CI: 'false'
+          NEXT_TELEMETRY_DISABLED: '1'
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -54,3 +57,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+

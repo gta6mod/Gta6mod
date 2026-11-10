@@ -1,45 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://f1r0s.github.io/Gta6mod/</loc>
+    <loc>https://gta6mod.github.io/Gta6mod/</loc>
     <lastmod>2026-11-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://f1r0s.github.io/Gta6mod/mods/shaders/vice-city-sunset-rtgi-path-tracer/</loc>
+    <loc>https://gta6mod.github.io/Gta6mod/mods/shaders/vice-city-sunset-rtgi-path-tracer/</loc>
     <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://f1r0s.github.io/Gta6mod/mods/vehicles/grotti-cheetah-vice-widebody-custom/</loc>
+    <loc>https://gta6mod.github.io/Gta6mod/mods/vehicles/grotti-cheetah-vice-widebody-custom/</loc>
     <lastmod>2026-11-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://f1r0s.github.io/Gta6mod/mods/map-expansions/starfish-island-syndicate-estate-interior/</loc>
+    <loc>https://gta6mod.github.io/Gta6mod/mods/map-expansions/starfish-island-syndicate-estate-interior/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://f1r0s.github.io/Gta6mod/mods/scripts/grassrivers-wetlands-hydro-physics-overhaul/</loc>
+    <loc>https://gta6mod.github.io/Gta6mod/mods/scripts/grassrivers-wetlands-hydro-physics-overhaul/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://f1r0s.github.io/Gta6mod/mods/characters/vice-syndicate-heist-wardrobe-collection/</loc>
+    <loc>https://gta6mod.github.io/Gta6mod/mods/characters/vice-syndicate-heist-wardrobe-collection/</loc>
     <lastmod>2026-11-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://f1r0s.github.io/Gta6mod/mods/vehicles/declasse-tulip-72-drag-strip-custom/</loc>
+    <loc>https://gta6mod.github.io/Gta6mod/mods/vehicles/declasse-tulip-72-drag-strip-custom/</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 </urlset>
+

@@ -9,8 +9,16 @@ import {
   PlusCircle,
   Search,
   ShieldAlert,
+  Users,
 } from 'lucide-react';
-import { validateModSubmission } from '@/lib/mods-repository';
+import { OFFICIAL_VI_ASSETS, validateModSubmission } from '@/lib/mods-repository';
+import {
+  SitemapInspectorState,
+  SubmissionMachineState,
+  transitionSitemapInspector,
+  transitionSubmission,
+} from '@/lib/state-machines';
+import { useI18n } from './language-provider';
 import {
   buildSitemapIndexXml,
   buildUrlSetXml,
@@ -75,6 +83,7 @@ export function CreditsAndSitemapSection({
   showSitemap = true,
   onJumpToMods,
 }: CreditsAndSitemapSectionProps) {
+  const { t } = useI18n();
   const [selectedSpecialty, setSelectedSpecialty] = useState<
     CreatorCredit['specialty'] | 'All'
   >('All');
@@ -86,15 +95,19 @@ export function CreditsAndSitemapSection({
   const [version, setVersion] = useState('v1.0.0');
   const [summary, setSummary] = useState('');
   const [youtubeUrl, setYoutubeUrl] = useState('');
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  const [submitSuccessBanner, setSubmitSuccessBanner] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionState, setSubmissionState] = useState<SubmissionMachineState>({
+    status: 'idle',
+    errors: {},
+    message: null,
+  });
 
-  // Sitemap Explorer state
-  const [selectedShard, setSelectedShard] = useState<number | 'all'>('all');
-  const [selectedEntityType, setSelectedEntityType] = useState<SitemapEntityType | 'all'>('all');
-  const [sitemapQuery, setSitemapQuery] = useState('');
-  const [xmlPreviewMode, setXmlPreviewMode] = useState<'urlset' | 'sitemapindex'>('urlset');
+  // Sitemap Explorer Explicit State Machine
+  const [inspectorState, setInspectorState] = useState<SitemapInspectorState>({
+    shardId: 'all',
+    entityType: 'all',
+    query: '',
+    xmlMode: 'urlset',
+  });
 
   const filteredCredits =
     selectedSpecialty === 'All'
@@ -103,24 +116,24 @@ export function CreditsAndSitemapSection({
 
   const shardsSummary = getSitemapShardsSummary(
     sitemapEntries,
-    'https://gta6mod.community'
+    'https://gta6mod.github.io/Gta6mod'
   );
 
   const visibleSitemapRows = filterSitemapEntries(sitemapEntries, {
-    shardId: selectedShard,
-    entityType: selectedEntityType,
-    query: sitemapQuery,
+    shardId: inspectorState.shardId,
+    entityType: inspectorState.entityType,
+    query: inspectorState.query,
     limit: 12,
   });
 
   const sampleXmlOutput =
-    xmlPreviewMode === 'sitemapindex'
+    inspectorState.xmlMode === 'sitemapindex'
       ? buildSitemapIndexXml(shardsSummary)
       : buildUrlSetXml(visibleSitemapRows.slice(0, 5));
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitSuccessBanner(null);
+    setSubmissionState((prev) => transitionSubmission(prev, { type: 'RESET_FORM' }));
 
     const payload: ModSubmissionInput = {
       title,
@@ -137,51 +150,52 @@ export function CreditsAndSitemapSection({
 
     const validation = validateModSubmission(payload);
     if (!validation.valid) {
-      setFormErrors(validation.errors);
+      setSubmissionState((prev) =>
+        transitionSubmission(prev, { type: 'VALIDATION_FAILED', errors: validation.errors })
+      );
       return;
     }
 
-    setFormErrors({});
-    setIsSubmitting(true);
+    setSubmissionState((prev) => transitionSubmission(prev, { type: 'START_SUBMIT' }));
     try {
       await onAddModAndCredit(payload);
-      setSubmitSuccessBanner(
-        `Published "${payload.title}" (${payload.version}) by ${payload.authorHandle} to Mods Directory, Creator Credits, and dynamically updated /sitemap.xml Shard 01.`
+      setSubmissionState((prev) =>
+        transitionSubmission(prev, {
+          type: 'SUBMIT_SUCCESS',
+          message: `Published "${payload.title}" (${payload.version}) by ${payload.authorHandle} to Mods Directory, Creator Credits, and /sitemap.xml Shard 01.`,
+        })
       );
       setTitle('');
       setAuthorHandle('');
       setVersion('v1.0.0');
       setSummary('');
       setYoutubeUrl('');
-    } finally {
-      setIsSubmitting(false);
+    } catch {
+      // State remains deterministic
     }
   };
 
   return (
-    <div className="bg-gradient-to-b from-[#0E031A] via-[#1B052C] to-[#07010C]">
+    <div className="bg-[#0A0A0A]">
       {/* SECTION 03: CREDITS & COMMUNITY ACKNOWLEDGMENTS HEADER */}
       {showCredits && (
         <section
           id="credits"
           aria-labelledby="credits-heading"
-          className="py-20 px-6 lg:px-12 border-b border-[#FF2A85]/20"
+          className="py-20 px-6 lg:px-12 border-b border-[#262626]"
         >
           <div className="max-w-[1200px] mx-auto">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
               <div>
-                <p className="text-xs font-medium tracking-wider text-[#00F0FF] mb-2">
-                  03. Creator Credits, Attribution &amp; Community Acknowledgments
-                </p>
+                <Users className="w-6 h-6 text-[#EAB308] mb-3" aria-hidden="true" />
                 <h2
                   id="credits-heading"
-                  className="font-display text-3xl sm:text-5xl font-bold text-white tracking-tight"
+                  className="font-display text-3xl sm:text-5xl font-bold text-[#F5F5F5] tracking-tight"
                 >
-                  Credits &amp; Modding Acknowledgments
+                  {t('credits.title')}
                 </h2>
-                <p className="text-sm text-slate-300 max-w-2xl mt-2">
-                  Recognizing the shader architects, 3D vehicle modelers, C# physics engineers, and
-                  YouTube gameplay analysts whose work powers the Gta6mod repository.
+                <p className="text-sm text-neutral-300 max-w-2xl mt-2">
+                  {t('credits.subtitle')}
                 </p>
               </div>
 
@@ -190,9 +204,9 @@ export function CreditsAndSitemapSection({
                   <a
                     href="#mods"
                     onClick={onJumpToMods}
-                    className="px-3.5 py-2 text-xs font-medium text-[#FACC15] bg-[#140421] hover:bg-white/10 border border-[#FACC15]/30 rounded-lg transition-colors whitespace-nowrap shrink-0"
+                    className="px-3.5 py-2 text-xs font-mono text-[#EAB308] bg-[#121212] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap shrink-0"
                   >
-                    ← Back to Mods Directory
+                    ← {t('credits.backToMods')}
                   </a>
                 )}
               </div>
@@ -202,7 +216,7 @@ export function CreditsAndSitemapSection({
             <div
               role="group"
               aria-label="Filter credits by specialty"
-              className="flex flex-wrap items-center gap-1.5 p-1.5 bg-[#12031E] rounded-lg border border-white/10 mb-8"
+              className="flex flex-wrap items-center gap-1 p-1 bg-[#121212] border border-[#262626] mb-8"
             >
               {CREDIT_SPECIALTIES.map((spec) => {
                 const active = selectedSpecialty === spec;
@@ -211,10 +225,10 @@ export function CreditsAndSitemapSection({
                     key={spec}
                     type="button"
                     onClick={() => setSelectedSpecialty(spec)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                    className={`px-3 py-1.5 text-xs font-mono transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                       active
-                        ? 'bg-[#FACC15] text-[#09020E] font-semibold'
-                        : 'text-slate-300 hover:text-white hover:bg-white/5'
+                        ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
+                        : 'text-neutral-300 hover:text-white'
                     }`}
                   >
                     {spec}
@@ -228,18 +242,18 @@ export function CreditsAndSitemapSection({
               {filteredCredits.map((credit) => (
                 <article
                   key={credit.id}
-                  className="rounded-xl bg-[#130420] border border-white/10 p-5 flex flex-col justify-between hover:border-[#FF2A85]/50 transition-colors"
+                  className="bg-[#121212] border border-[#262626] p-5 flex flex-col justify-between hover:border-[#EAB308] transition-colors"
                 >
                   <div>
-                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#FACC15] font-mono tabular-nums mb-2">
+                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-[#EAB308] font-mono tabular-nums mb-2">
                       <span>{credit.specialty}</span>
                       <span aria-hidden="true">·</span>
                       <span>{credit.attributionLicense}</span>
                     </div>
 
-                    <h3 className="text-lg font-semibold text-white mb-1">
+                    <h3 className="text-lg font-semibold text-[#F5F5F5] mb-1">
                       {credit.displayName}{' '}
-                      <span className="text-sm font-mono text-[#FF2A85]">{credit.handle}</span>
+                      <span className="text-sm font-mono text-[#EAB308]">{credit.handle}</span>
                     </h3>
 
                     <p className="text-xs text-slate-300 leading-relaxed mb-4">
@@ -247,32 +261,32 @@ export function CreditsAndSitemapSection({
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-300 font-mono tabular-nums">
-                    <span>{credit.modsPublished} Indexed Builds</span>
+                  <div className="pt-3 border-t border-[#262626] flex items-center justify-between text-xs text-neutral-300 font-mono tabular-nums">
+                    <span>{credit.modsPublished} Builds</span>
                     <span aria-hidden="true">·</span>
                     <span>{credit.totalDownloads}</span>
                     <span aria-hidden="true">·</span>
-                    <span className="text-[#00F0FF]">{credit.verifiedBuilds}</span>
+                    <span className="text-[#EAB308]">{credit.verifiedBuilds}</span>
                   </div>
                 </article>
               ))}
             </div>
 
             {/* Special Community Acknowledgments Ledger */}
-            <div className="rounded-xl bg-[#11031C] border border-white/10 p-6 mb-16">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-white/10">
-                <h3 className="font-display text-xl font-bold text-white">
-                  Special Acknowledgments &amp; Open-Source Research Credits
+            <div className="bg-[#121212] border border-[#262626] p-6 mb-16">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 mb-4 border-b border-[#262626]">
+                <h3 className="font-display text-xl font-bold text-[#F5F5F5]">
+                  {t('credits.ackTitle')}
                 </h3>
-                <span className="text-xs font-mono text-[#00F0FF]">
-                  Community Attribution Standard v2.4
+                <span className="text-xs font-mono text-[#EAB308]">
+                  {t('credits.ackStandard')}
                 </span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {SPECIAL_ACKNOWLEDGMENTS.map((ack) => (
                   <div
                     key={ack.group}
-                    className="p-4 rounded-lg bg-[#180528] border border-white/5"
+                    className="p-4 bg-[#0A0A0A] border border-[#262626]"
                   >
                     <div className="text-xs font-mono text-[#FACC15] mb-1">{ack.role}</div>
                     <div className="text-sm font-semibold text-white mb-1">{ack.group}</div>
@@ -285,40 +299,33 @@ export function CreditsAndSitemapSection({
             {/* Interactive Submit Mod & Creator Credit Form */}
             <div
               id="submit-mod"
-              className="rounded-2xl bg-gradient-to-r from-[#2E0746] via-[#680E5B] to-[#3B0944] border border-[#FF2A85]/45 p-6 lg:p-10"
+              className="bg-[#121212] border border-[#262626] p-6 lg:p-10"
             >
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <div className="lg:col-span-5">
-                  <p className="text-xs font-medium tracking-wider text-[#FDE047] mb-2">
-                    Dynamic Repository &amp; Sitemap Registration
-                  </p>
-                  <h3 className="font-display text-2xl sm:text-3xl font-bold text-white mb-3">
-                    Register a New Mod Build &amp; Creator Credit
+                  <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#F5F5F5] mb-3">
+                    {t('credits.submitTitle')}
                   </h3>
-                  <p className="text-sm text-slate-200 leading-relaxed mb-5">
-                    Submit your vehicle pack, RTGI shader preset, or YouTube gameplay showcase.
-                    Validated submissions immediately update the Mods Directory, the Creator Credits
-                    section, and dynamically append the new URL to the server&apos;s{' '}
-                    <code className="font-mono text-[#FACC15]">/sitemap.xml</code> feed.
+                  <p className="text-sm text-neutral-300 leading-relaxed mb-5">
+                    {t('credits.submitSubtitle')}
                   </p>
 
-                  <div className="rounded-xl bg-[#0D0216]/90 border border-white/15 p-4 flex items-center gap-4">
-                    <div className="w-16 h-20 rounded overflow-hidden shrink-0 bg-[#2A0845] border border-white/15">
+                  <div className="bg-[#0A0A0A] border border-[#262626] p-4 flex items-center gap-4">
+                    <div className="w-16 h-20 overflow-hidden shrink-0 bg-[#121212] border border-[#262626]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={withBasePath("/assets/aistudio/image_1b0a0f0e.png")}
-                        alt="Gta6mod Vice City Sunset Design Reference"
+                        src={withBasePath(OFFICIAL_VI_ASSETS.heroPoster)}
+                        alt="Grand Theft Auto VI Official Reference Key Art"
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="text-xs text-slate-300">
-                      <div className="font-semibold text-white mb-1">
-                        GTA 6 / Leonida Visual System Active
+                    <div className="text-xs text-neutral-300">
+                      <div className="font-mono font-semibold text-[#F5F5F5] mb-1">
+                        Repository Index Protocol
                       </div>
                       <p className="leading-relaxed">
-                        High-contrast dark palette, neon magenta &amp; cyan accents, and real-time
-                        XML sitemap synchronization.
+                        Direct registration to the Mods Directory, Creator Attribution Ledger, and Shard 01 XML feed.
                       </p>
                     </div>
                   </div>
@@ -328,15 +335,15 @@ export function CreditsAndSitemapSection({
                   onSubmit={handleFormSubmit}
                   noValidate
                   aria-label="Submit Mod and Creator Credit"
-                  className="lg:col-span-7 rounded-xl bg-[#0D0216]/95 border border-white/15 p-6 space-y-4"
+                  className="lg:col-span-7 bg-[#0A0A0A] border border-[#262626] p-6 space-y-4"
                 >
-                  {submitSuccessBanner && (
+                  {submissionState.status === 'published' && submissionState.message && (
                     <div
                       role="status"
-                      className="rounded-lg bg-emerald-500/15 border border-emerald-400/40 p-3.5 flex items-start gap-2.5 text-xs text-emerald-200"
+                      className="bg-[#121212] border border-[#EAB308] p-3.5 flex items-start gap-2.5 text-xs text-[#F5F5F5]"
                     >
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                      <span>{submitSuccessBanner}</span>
+                      <CheckCircle2 className="w-4 h-4 text-[#EAB308] shrink-0 mt-0.5" />
+                      <span>{submissionState.message}</span>
                     </div>
                   )}
 
@@ -344,9 +351,9 @@ export function CreditsAndSitemapSection({
                     <div>
                       <label
                         htmlFor="submit-mod-title"
-                        className="block text-xs font-medium text-slate-200 mb-1.5"
+                        className="block text-xs font-mono text-neutral-200 mb-1.5"
                       >
-                        Mod or Gameplay Title *
+                        {t('credits.formTitle')}
                       </label>
                       <input
                         id="submit-mod-title"
@@ -354,19 +361,19 @@ export function CreditsAndSitemapSection({
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="e.g. Vice Beach Neon Palm Overhaul"
-                        className="w-full px-3.5 py-2 text-xs text-white bg-[#180528] border border-white/15 rounded-lg placeholder:text-slate-400 focus:outline-none focus:border-[#FACC15]"
+                        className="w-full px-3.5 py-2 text-xs text-[#F5F5F5] bg-[#121212] border border-[#262626] placeholder:text-neutral-500 focus:outline-none focus:border-[#EAB308]"
                       />
-                      {formErrors.title && (
-                        <p className="text-xs text-rose-400 mt-1">{formErrors.title}</p>
+                      {submissionState.errors.title && (
+                        <p className="text-xs text-[#EAB308] font-mono mt-1">{submissionState.errors.title}</p>
                       )}
                     </div>
 
                     <div>
                       <label
                         htmlFor="submit-author-handle"
-                        className="block text-xs font-medium text-slate-200 mb-1.5"
+                        className="block text-xs font-mono text-neutral-200 mb-1.5"
                       >
-                        Creator Credit Handle *
+                        {t('credits.formHandle')}
                       </label>
                       <input
                         id="submit-author-handle"
@@ -374,10 +381,10 @@ export function CreditsAndSitemapSection({
                         value={authorHandle}
                         onChange={(e) => setAuthorHandle(e.target.value)}
                         placeholder="e.g. @ViceShaderLab"
-                        className="w-full px-3.5 py-2 text-xs text-white bg-[#180528] border border-white/15 rounded-lg placeholder:text-slate-400 focus:outline-none focus:border-[#FACC15]"
+                        className="w-full px-3.5 py-2 text-xs text-[#F5F5F5] bg-[#121212] border border-[#262626] placeholder:text-neutral-500 focus:outline-none focus:border-[#EAB308]"
                       />
-                      {formErrors.authorHandle && (
-                        <p className="text-xs text-rose-400 mt-1">{formErrors.authorHandle}</p>
+                      {submissionState.errors.authorHandle && (
+                        <p className="text-xs text-[#EAB308] font-mono mt-1">{submissionState.errors.authorHandle}</p>
                       )}
                     </div>
                   </div>
@@ -386,9 +393,9 @@ export function CreditsAndSitemapSection({
                     <div>
                       <label
                         htmlFor="submit-mod-category"
-                        className="block text-xs font-medium text-slate-200 mb-1.5"
+                        className="block text-xs font-mono text-neutral-200 mb-1.5"
                       >
-                        Category *
+                        {t('credits.formCategory')}
                       </label>
                       <select
                         id="submit-mod-category"
@@ -396,7 +403,7 @@ export function CreditsAndSitemapSection({
                         onChange={(e) =>
                           setCategory(e.target.value as Exclude<ModCategory, 'all'>)
                         }
-                        className="w-full px-3 py-2 text-xs text-white bg-[#180528] border border-white/15 rounded-lg focus:outline-none focus:border-[#FACC15]"
+                        className="w-full px-3 py-2 text-xs text-[#F5F5F5] bg-[#121212] border border-[#262626] focus:outline-none focus:border-[#EAB308]"
                       >
                         <option value="vehicles">Vehicles &amp; Customs</option>
                         <option value="shaders">Graphics &amp; Shaders</option>
@@ -409,9 +416,9 @@ export function CreditsAndSitemapSection({
                     <div>
                       <label
                         htmlFor="submit-mod-version"
-                        className="block text-xs font-medium text-slate-200 mb-1.5"
+                        className="block text-xs font-mono text-neutral-200 mb-1.5"
                       >
-                        Build Version *
+                        {t('credits.formVersion')}
                       </label>
                       <input
                         id="submit-mod-version"
@@ -419,19 +426,19 @@ export function CreditsAndSitemapSection({
                         value={version}
                         onChange={(e) => setVersion(e.target.value)}
                         placeholder="v1.0.0"
-                        className="w-full px-3.5 py-2 text-xs text-white font-mono bg-[#180528] border border-white/15 rounded-lg placeholder:text-slate-400 focus:outline-none focus:border-[#FACC15]"
+                        className="w-full px-3.5 py-2 text-xs text-[#F5F5F5] font-mono bg-[#121212] border border-[#262626] placeholder:text-neutral-500 focus:outline-none focus:border-[#EAB308]"
                       />
-                      {formErrors.version && (
-                        <p className="text-xs text-rose-400 mt-1">{formErrors.version}</p>
+                      {submissionState.errors.version && (
+                        <p className="text-xs text-[#EAB308] font-mono mt-1">{submissionState.errors.version}</p>
                       )}
                     </div>
 
                     <div>
                       <label
                         htmlFor="submit-youtube-url"
-                        className="block text-xs font-medium text-slate-200 mb-1.5"
+                        className="block text-xs font-mono text-neutral-200 mb-1.5"
                       >
-                        YouTube Showcase Link (Optional)
+                        {t('credits.formYoutube')}
                       </label>
                       <input
                         id="submit-youtube-url"
@@ -439,10 +446,10 @@ export function CreditsAndSitemapSection({
                         value={youtubeUrl}
                         onChange={(e) => setYoutubeUrl(e.target.value)}
                         placeholder="https://youtube.com/watch?v=..."
-                        className="w-full px-3.5 py-2 text-xs text-white bg-[#180528] border border-white/15 rounded-lg placeholder:text-slate-400 focus:outline-none focus:border-[#FACC15]"
+                        className="w-full px-3.5 py-2 text-xs text-[#F5F5F5] bg-[#121212] border border-[#262626] placeholder:text-neutral-500 focus:outline-none focus:border-[#EAB308]"
                       />
-                      {formErrors.youtubeUrl && (
-                        <p className="text-xs text-rose-400 mt-1">{formErrors.youtubeUrl}</p>
+                      {submissionState.errors.youtubeUrl && (
+                        <p className="text-xs text-[#EAB308] font-mono mt-1">{submissionState.errors.youtubeUrl}</p>
                       )}
                     </div>
                   </div>
@@ -450,9 +457,9 @@ export function CreditsAndSitemapSection({
                   <div>
                     <label
                       htmlFor="submit-mod-summary"
-                      className="block text-xs font-medium text-slate-200 mb-1.5"
+                      className="block text-xs font-mono text-neutral-200 mb-1.5"
                     >
-                      Technical Summary &amp; Installation Notes *
+                      {t('credits.formSummary')}
                     </label>
                     <textarea
                       id="submit-mod-summary"
@@ -460,24 +467,28 @@ export function CreditsAndSitemapSection({
                       value={summary}
                       onChange={(e) => setSummary(e.target.value)}
                       placeholder="Describe shader parameters, poly-count budget, or gameplay modifications..."
-                      className="w-full px-3.5 py-2 text-xs text-white bg-[#180528] border border-white/15 rounded-lg placeholder:text-slate-400 focus:outline-none focus:border-[#FACC15]"
+                      className="w-full px-3.5 py-2 text-xs text-[#F5F5F5] bg-[#121212] border border-[#262626] placeholder:text-neutral-500 focus:outline-none focus:border-[#EAB308]"
                     />
-                    {formErrors.summary && (
-                      <p className="text-xs text-rose-400 mt-1">{formErrors.summary}</p>
+                    {submissionState.errors.summary && (
+                      <p className="text-xs text-[#EAB308] font-mono mt-1">{submissionState.errors.summary}</p>
                     )}
                   </div>
 
                   <div className="flex items-center justify-between gap-4 pt-2">
-                    <span className="text-[11px] text-slate-400">
-                      Persists to server &amp; dynamically updates live /sitemap.xml
+                    <span className="text-[11px] font-mono text-neutral-400">
+                      {t('credits.formPersistNote')}
                     </span>
                     <button
                       type="submit"
-                      disabled={isSubmitting}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold text-[#09020E] bg-[#FACC15] rounded-lg hover:bg-[#FDE047] transition-colors whitespace-nowrap shrink-0 cursor-pointer disabled:opacity-50"
+                      disabled={submissionState.status === 'submitting'}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold text-[#0A0A0A] bg-[#EAB308] hover:bg-[#FACC15] transition-colors whitespace-nowrap shrink-0 cursor-pointer disabled:opacity-50"
                     >
                       <PlusCircle className="w-4 h-4" />
-                      <span>{isSubmitting ? 'Indexing...' : 'Publish Mod & Credit'}</span>
+                      <span>
+                        {submissionState.status === 'submitting'
+                          ? t('credits.formIndexing')
+                          : t('credits.formSubmit')}
+                      </span>
                     </button>
                   </div>
                 </form>
@@ -492,25 +503,20 @@ export function CreditsAndSitemapSection({
         <section
           id="sitemap"
           aria-labelledby="sitemap-heading"
-          className="py-20 px-6 lg:px-12 border-b border-white/10"
+          className="py-20 px-6 lg:px-12 border-b border-[#262626] bg-[#0A0A0A]"
         >
           <div className="max-w-[1200px] mx-auto">
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
               <div>
-                <p className="text-xs font-medium tracking-wider text-[#FACC15] mb-2">
-                  04. Dynamically Updated Multi-Thousand Page Sitemap Engine
-                </p>
+                <FileCode className="w-6 h-6 text-[#EAB308] mb-3" aria-hidden="true" />
                 <h2
                   id="sitemap-heading"
-                  className="font-display text-3xl sm:text-5xl font-bold text-white tracking-tight"
+                  className="font-display text-3xl sm:text-5xl font-bold text-[#F5F5F5] tracking-tight"
                 >
-                  Multi-Thousand Page sitemap.xml Inspector
+                  {t('sitemap.title')}
                 </h2>
-                <p className="text-sm text-slate-300 max-w-2xl mt-2">
-                  Structured across 5 high-speed crawler shards indexing{' '}
-                  <strong>{sitemapEntries.length.toLocaleString()}</strong> URLs. Whenever a new mod
-                  or creator credit page is added, <code className="font-mono text-[#00F0FF]">/sitemap.xml</code>{' '}
-                  dynamically updates immediately for search engine crawlers.
+                <p className="text-sm text-neutral-300 max-w-2xl mt-2">
+                  {t('sitemap.subtitle')} ({sitemapEntries.length.toLocaleString()} URLs).
                 </p>
               </div>
 
@@ -519,10 +525,12 @@ export function CreditsAndSitemapSection({
                   href="/sitemap.xml"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#09020E] bg-[#FACC15] rounded-lg hover:bg-[#FDE047] transition-colors whitespace-nowrap shrink-0"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#0A0A0A] bg-[#EAB308] hover:bg-[#FACC15] transition-colors whitespace-nowrap shrink-0"
                 >
                   <FileCode className="w-4 h-4" />
-                  <span>Fetch /sitemap.xml ({sitemapEntries.length.toLocaleString()} URLs)</span>
+                  <span>
+                    {t('sitemap.fetchXml')} ({sitemapEntries.length.toLocaleString()})
+                  </span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
 
@@ -530,10 +538,10 @@ export function CreditsAndSitemapSection({
                   href="/sitemap.xml?index=true"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-medium text-white bg-white/10 hover:bg-white/15 border border-white/15 rounded-lg transition-colors whitespace-nowrap shrink-0"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-mono text-[#F5F5F5] bg-[#121212] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap shrink-0"
                 >
-                  <Code2 className="w-4 h-4 text-[#FF2A85]" />
-                  <span>View Sitemap Index XML</span>
+                  <Code2 className="w-4 h-4 text-[#EAB308]" />
+                  <span>{t('sitemap.viewIndex')}</span>
                 </a>
               </div>
             </div>
@@ -541,28 +549,33 @@ export function CreditsAndSitemapSection({
             {/* 5 Crawler Shards Overview Strip */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
               {shardsSummary.map((shard) => {
-                const isSelected = selectedShard === shard.shardId;
+                const isSelected = inspectorState.shardId === shard.shardId;
                 return (
                   <button
                     key={shard.shardId}
                     type="button"
                     onClick={() =>
-                      setSelectedShard(isSelected ? 'all' : shard.shardId)
+                      setInspectorState((prev) =>
+                        transitionSitemapInspector(prev, {
+                          type: 'TOGGLE_SHARD',
+                          shardId: shard.shardId,
+                        })
+                      )
                     }
-                    className={`text-left p-4 rounded-xl border transition-colors cursor-pointer ${
+                    className={`text-left p-4 border transition-colors cursor-pointer ${
                       isSelected
-                        ? 'bg-[#280940] border-[#FACC15]'
-                        : 'bg-[#130420] border-white/10 hover:border-[#FF2A85]/50'
+                        ? 'bg-[#121212] border-[#EAB308]'
+                        : 'bg-[#121212] border-[#262626] hover:border-neutral-500'
                     }`}
                   >
-                    <div className="flex items-center justify-between text-xs font-mono tabular-nums text-[#FACC15] mb-1">
+                    <div className="flex items-center justify-between text-xs font-mono tabular-nums text-[#EAB308] mb-1">
                       <span>SHARD 0{shard.shardId}</span>
                       <span>{shard.urlCount} URLs</span>
                     </div>
-                    <div className="text-xs font-semibold text-white line-clamp-2 mb-2">
+                    <div className="text-xs font-semibold text-[#F5F5F5] line-clamp-2 mb-2">
                       {shard.label}
                     </div>
-                    <div className="text-[11px] font-mono text-[#00F0FF] truncate">
+                    <div className="text-[11px] font-mono text-neutral-400 truncate">
                       /sitemap.xml?shard={shard.shardId}
                     </div>
                   </button>
@@ -572,7 +585,7 @@ export function CreditsAndSitemapSection({
 
             {/* Sitemap Filter Controls + Live XML Preview Split */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              <div className="lg:col-span-7 rounded-xl bg-[#130420] border border-white/15 p-5 flex flex-col justify-between">
+              <div className="lg:col-span-7 bg-[#121212] border border-[#262626] p-5 flex flex-col justify-between">
                 <div>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-white/10">
                     <div className="relative flex-1">
@@ -583,10 +596,17 @@ export function CreditsAndSitemapSection({
                       <input
                         id="sitemap-search-input"
                         type="search"
-                        value={sitemapQuery}
-                        onChange={(e) => setSitemapQuery(e.target.value)}
-                        placeholder="Filter 2,525+ indexed crawler slugs (e.g. ocean-drive, credit)..."
-                        className="w-full pl-9 pr-3 py-2 text-xs text-white bg-[#1B062C] border border-white/15 rounded-lg placeholder:text-slate-400 focus:outline-none focus:border-[#FACC15]"
+                        value={inspectorState.query}
+                        onChange={(e) =>
+                          setInspectorState((prev) =>
+                            transitionSitemapInspector(prev, {
+                              type: 'SET_QUERY',
+                              query: e.target.value,
+                            })
+                          )
+                        }
+                        placeholder={t('sitemap.searchPlaceholder')}
+                        className="w-full pl-9 pr-3 py-2 text-xs text-[#F5F5F5] bg-[#0A0A0A] border border-[#262626] placeholder:text-neutral-500 focus:outline-none focus:border-[#EAB308]"
                       />
                     </div>
 
@@ -596,13 +616,16 @@ export function CreditsAndSitemapSection({
                       </label>
                       <select
                         id="sitemap-entity-select"
-                        value={selectedEntityType}
+                        value={inspectorState.entityType}
                         onChange={(e) =>
-                          setSelectedEntityType(
-                            e.target.value as SitemapEntityType | 'all'
+                          setInspectorState((prev) =>
+                            transitionSitemapInspector(prev, {
+                              type: 'SET_ENTITY_TYPE',
+                              entityType: e.target.value as SitemapEntityType | 'all',
+                            })
                           )
                         }
-                        className="px-3 py-2 text-xs text-white bg-[#1B062C] border border-white/15 rounded-lg focus:outline-none focus:border-[#FACC15]"
+                        className="px-3 py-2 text-xs text-[#F5F5F5] bg-[#0A0A0A] border border-[#262626] focus:outline-none focus:border-[#EAB308]"
                       >
                         <option value="all">All Entity Types</option>
                         <option value="core">Core Routes</option>
@@ -624,58 +647,79 @@ export function CreditsAndSitemapSection({
                           <th className="py-2 pl-2 text-right">Priority</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/5 text-xs font-mono tabular-nums">
-                        {visibleSitemapRows.map((row) => (
-                          <tr key={row.loc} className="hover:bg-white/5">
-                            <td className="py-2.5 pr-3 text-slate-200 max-w-[280px] truncate">
-                              {row.path}
-                            </td>
-                            <td className="py-2.5 px-2 text-[#FF2A85]">{row.entityType}</td>
-                            <td className="py-2.5 px-2 text-slate-300">#{row.shardId}</td>
-                            <td className="py-2.5 pl-2 text-right text-[#FACC15]">
-                              {row.priority}
+                      <tbody className="divide-y divide-[#262626] text-xs font-mono tabular-nums">
+                        {visibleSitemapRows.length === 0 ? (
+                          <tr>
+                            <td colSpan={4} className="py-6 text-center text-neutral-400">
+                              {t('sitemap.emptyState')}
                             </td>
                           </tr>
-                        ))}
+                        ) : (
+                          visibleSitemapRows.map((row) => (
+                            <tr key={row.loc} className="hover:bg-[#0A0A0A]">
+                              <td className="py-2.5 pr-3 text-neutral-200 max-w-[280px] truncate">
+                                {row.path}
+                              </td>
+                              <td className="py-2.5 px-2 text-[#EAB308]">{row.entityType}</td>
+                              <td className="py-2.5 px-2 text-neutral-300">#{row.shardId}</td>
+                              <td className="py-2.5 pl-2 text-right text-[#F5F5F5]">
+                                {row.priority}
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
                   </div>
                 </div>
 
-                <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400 font-mono tabular-nums">
+                <div className="pt-4 mt-4 border-t border-[#262626] flex items-center justify-between text-xs text-neutral-400 font-mono tabular-nums">
                   <span>
-                    Showing {visibleSitemapRows.length} of {sitemapEntries.length.toLocaleString()}{' '}
-                    indexed crawler URLs
+                    {visibleSitemapRows.length} / {sitemapEntries.length.toLocaleString()} URLs
                   </span>
-                  <span className="text-[#00F0FF]">Dynamic XML Sync Enabled</span>
+                  <span className="text-[#EAB308]">XML 0.9</span>
                 </div>
               </div>
 
-              <div className="lg:col-span-5 rounded-xl bg-[#09020E] border border-white/15 p-5 flex flex-col justify-between">
+              <div className="lg:col-span-5 bg-[#121212] border border-[#262626] p-5 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-white/10">
                     <span className="text-xs font-semibold text-white">
                       Live Crawler XML Payload Preview
                     </span>
-                    <div className="flex items-center gap-1 bg-[#1B062C] p-1 rounded-md border border-white/10">
+                    <div className="flex items-center gap-1 bg-[#0A0A0A] p-1 border border-[#262626]">
                       <button
                         type="button"
-                        onClick={() => setXmlPreviewMode('urlset')}
-                        className={`px-2.5 py-1 text-[11px] font-mono rounded transition-colors cursor-pointer ${
-                          xmlPreviewMode === 'urlset'
-                            ? 'bg-[#FACC15] text-[#09020E] font-semibold'
-                            : 'text-slate-300 hover:text-white'
+                        onClick={() =>
+                          setInspectorState((prev) =>
+                            transitionSitemapInspector(prev, {
+                              type: 'SET_XML_MODE',
+                              xmlMode: 'urlset',
+                            })
+                          )
+                        }
+                        className={`px-2.5 py-1 text-[11px] font-mono transition-colors cursor-pointer ${
+                          inspectorState.xmlMode === 'urlset'
+                            ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
+                            : 'text-neutral-300 hover:text-white'
                         }`}
                       >
                         urlset
                       </button>
                       <button
                         type="button"
-                        onClick={() => setXmlPreviewMode('sitemapindex')}
-                        className={`px-2.5 py-1 text-[11px] font-mono rounded transition-colors cursor-pointer ${
-                          xmlPreviewMode === 'sitemapindex'
-                            ? 'bg-[#FACC15] text-[#09020E] font-semibold'
-                            : 'text-slate-300 hover:text-white'
+                        onClick={() =>
+                          setInspectorState((prev) =>
+                            transitionSitemapInspector(prev, {
+                              type: 'SET_XML_MODE',
+                              xmlMode: 'sitemapindex',
+                            })
+                          )
+                        }
+                        className={`px-2.5 py-1 text-[11px] font-mono transition-colors cursor-pointer ${
+                          inspectorState.xmlMode === 'sitemapindex'
+                            ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
+                            : 'text-neutral-300 hover:text-white'
                         }`}
                       >
                         sitemapindex
@@ -683,20 +727,20 @@ export function CreditsAndSitemapSection({
                     </div>
                   </div>
 
-                  <pre className="text-[11px] font-mono text-slate-200 bg-[#050108] p-4 rounded-lg border border-white/10 overflow-x-auto leading-relaxed max-h-[360px]">
+                  <pre className="text-[11px] font-mono text-neutral-200 bg-[#0A0A0A] p-4 border border-[#262626] overflow-x-auto leading-relaxed max-h-[360px]">
                     <code>{sampleXmlOutput}</code>
                   </pre>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-white/10 text-xs text-slate-300 flex items-center justify-between">
-                  <span>Robots directive configured at /robots.txt</span>
+                <div className="mt-4 pt-3 border-t border-[#262626] text-xs text-neutral-300 flex items-center justify-between">
+                  <span>{t('sitemap.robotsNote')}</span>
                   <a
                     href="/robots.txt"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-mono text-[#FACC15] hover:underline"
+                    className="font-mono text-[#EAB308] hover:underline"
                   >
-                    View /robots.txt
+                    /robots.txt
                   </a>
                 </div>
               </div>
@@ -706,18 +750,18 @@ export function CreditsAndSitemapSection({
       )}
 
       {/* QUIET FOOTER WITH PROMINENT NON-AFFILIATION DISCLAIMER */}
-      <footer className="py-12 px-6 lg:px-12 bg-[#050108] text-slate-300">
+      <footer className="py-12 px-6 lg:px-12 bg-[#0A0A0A] text-neutral-300">
         <div className="max-w-[1200px] mx-auto flex flex-col gap-8">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-white/10">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-[#262626]">
             <div>
               <a
                 href="#top"
-                className="font-display text-2xl font-bold tracking-wider text-white"
+                className="font-display text-2xl font-bold tracking-wider text-[#F5F5F5]"
               >
                 Gta6mod
               </a>
-              <p className="text-xs text-slate-400 mt-1">
-                Community Modding Index, Shader Repository &amp; YouTube Gameplay Hub
+              <p className="text-xs text-neutral-400 mt-1">
+                {t('footer.subtitle')}
               </p>
             </div>
 
@@ -745,20 +789,15 @@ export function CreditsAndSitemapSection({
             </div>
           </div>
 
-          <div className="rounded-xl bg-[#11031C] border border-white/10 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-[#121212] border border-[#262626] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-start gap-3">
-              <ShieldAlert className="w-5 h-5 text-[#FACC15] shrink-0 mt-0.5" />
-              <div className="text-xs text-slate-200 leading-relaxed">
-                <strong>Official Non-Affiliation Disclaimer:</strong> Gta6mod is an independent,
-                fan-operated community modding directory and video showcase. This website is{' '}
-                <strong>NOT affiliated with, endorsed by, sponsored by, or connected to</strong>{' '}
-                Rockstar Games, Take-Two Interactive, or Grand Theft Auto VI (GTA 6). All game
-                titles, trademarks, and embedded YouTube media remain the property of their
-                respective copyright holders.
+              <ShieldAlert className="w-5 h-5 text-[#EAB308] shrink-0 mt-0.5" />
+              <div className="text-xs text-neutral-300 leading-relaxed">
+                {t('footer.disclaimer')}
               </div>
             </div>
-            <div className="text-xs text-slate-400 font-mono tabular-nums shrink-0">
-              © 2026 Gta6mod Community
+            <div className="text-xs text-neutral-400 font-mono tabular-nums shrink-0">
+              © 2026 Gta6mod
             </div>
           </div>
         </div>

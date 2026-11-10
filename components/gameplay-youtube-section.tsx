@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ExternalLink, Play, ShieldAlert, Tv, Video } from 'lucide-react';
+import { ExternalLink, Film, Play, ShieldAlert, Tv, Video } from 'lucide-react';
 import { YOUTUBE_GAMEPLAY_VIDEOS } from '@/lib/mods-repository';
+import { VideoTheaterState, transitionVideoTheater } from '@/lib/state-machines';
+import { useI18n } from './language-provider';
 import { ViceArtworkCanvas } from './vice-artwork-canvas';
 
 const ANGLED_MOD_SLICES = [
@@ -44,37 +46,36 @@ const ANGLED_MOD_SLICES = [
 ];
 
 export function GameplayYoutubeSection() {
-  const [activeVideoId, setActiveVideoId] = useState<string>(YOUTUBE_GAMEPLAY_VIDEOS[0].id);
-  const [playerMode, setPlayerMode] = useState<'interactive-preview' | 'youtube-iframe'>(
-    'interactive-preview'
-  );
-  const [selectedHighlightIdx, setSelectedHighlightIdx] = useState<number>(0);
+  const { t } = useI18n();
+  const [theaterState, setTheaterState] = useState<VideoTheaterState>({
+    mode: 'interactive-preview',
+    activeVideoId: YOUTUBE_GAMEPLAY_VIDEOS[0].id,
+    selectedHighlightIdx: 0,
+  });
 
   const activeVideo =
-    YOUTUBE_GAMEPLAY_VIDEOS.find((v) => v.id === activeVideoId) || YOUTUBE_GAMEPLAY_VIDEOS[0];
+    YOUTUBE_GAMEPLAY_VIDEOS.find((v) => v.id === theaterState.activeVideoId) ||
+    YOUTUBE_GAMEPLAY_VIDEOS[0];
 
   return (
     <section
       id="gameplay"
       aria-labelledby="gameplay-heading"
-      className="py-20 px-6 lg:px-12 bg-gradient-to-b from-[#130420] via-[#38094E] to-[#160526] border-b border-white/10"
+      className="py-20 px-6 lg:px-12 bg-[#0A0A0A] border-b border-[#262626]"
     >
       <div className="max-w-[1200px] mx-auto">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <p className="text-xs font-medium tracking-wider text-[#FACC15] mb-2">
-            02. Curated YouTube Gameplay &amp; Engine Analysis
-          </p>
+        {/* Section Header: Semantic Icon, Primary Title, Concise 1-Line Subtitle */}
+        <div className="mb-12">
+          <Film className="w-6 h-6 text-[#EAB308] mb-3" aria-hidden="true" />
           <h2
             id="gameplay-heading"
-            className="font-display text-3xl sm:text-4xl font-bold text-white tracking-tight"
+            className="font-display text-3xl sm:text-5xl font-bold text-[#F5F5F5] tracking-tight"
             style={{ textWrap: 'balance' }}
           >
-            YouTube GTA 6 Gameplay &amp; Mod Concept Theater
+            {t('gameplay.title')}
           </h2>
-          <p className="text-sm text-slate-300 max-w-2xl mx-auto mt-3">
-            Watch official Rockstar Games trailer breakdowns alongside community-uploaded YouTube
-            graphics mod concepts and map reconstructions.
+          <p className="text-sm text-neutral-300 max-w-2xl mt-2">
+            {t('gameplay.subtitle')}
           </p>
         </div>
 
@@ -90,18 +91,19 @@ export function GameplayYoutubeSection() {
               <button
                 key={video.id}
                 type="button"
-                onClick={() => {
-                  setActiveVideoId(video.id);
-                  setSelectedHighlightIdx(0);
-                }}
-                className={`text-left p-4 rounded-xl border transition-colors cursor-pointer ${
+                onClick={() =>
+                  setTheaterState((prev) =>
+                    transitionVideoTheater(prev, { type: 'SELECT_VIDEO', videoId: video.id })
+                  )
+                }
+                className={`text-left p-4 border transition-colors cursor-pointer ${
                   isSelected
-                    ? 'bg-[#25083B] border-[#FACC15]'
-                    : 'bg-[#150424]/90 border-white/10 hover:border-white/25'
+                    ? 'bg-[#121212] border-[#EAB308]'
+                    : 'bg-[#121212] border-[#262626] hover:border-neutral-500'
                 }`}
               >
-                <div className="flex items-center justify-between text-xs text-slate-300 font-mono tabular-nums mb-1.5">
-                  <span className="text-[#F472B6]">0{idx + 1}. {video.category}</span>
+                <div className="flex items-center justify-between text-xs text-neutral-300 font-mono tabular-nums mb-1.5">
+                  <span className="text-[#EAB308]">0{idx + 1}. {video.category}</span>
                   <span>{video.duration}</span>
                 </div>
                 <div className="text-sm font-semibold text-white line-clamp-1 mb-1">
@@ -115,12 +117,12 @@ export function GameplayYoutubeSection() {
           })}
         </div>
 
-        {/* Main Split Theater (Matching Reference Storyline / Media Split) */}
-        <div className="rounded-xl bg-[#140421] border border-white/15 p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch mb-16">
+        {/* Main Split Theater */}
+        <div className="bg-[#121212] border border-[#262626] p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch mb-16">
           {/* Left 7 Columns: Video Viewport */}
           <div className="lg:col-span-7 flex flex-col justify-between">
-            <div className="relative rounded-lg overflow-hidden bg-black aspect-video border border-white/15">
-              {playerMode === 'youtube-iframe' ? (
+            <div className="relative overflow-hidden bg-black aspect-video border border-[#262626]">
+              {theaterState.mode === 'youtube-iframe' ? (
                 <iframe
                   title={activeVideo.title}
                   src={`https://www.youtube-nocookie.com/embed/${activeVideo.youtubeId}?rel=0`}
@@ -141,27 +143,34 @@ export function GameplayYoutubeSection() {
                     className="w-full h-full"
                     label={activeVideo.title}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0D0216] via-[#0D0216]/35 to-transparent flex flex-col justify-between p-5">
+                  <div className="absolute inset-0 bg-black/50 flex flex-col justify-between p-5">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-mono tabular-nums text-[#FACC15] bg-[#11051C]/90 px-3 py-1 rounded border border-white/15">
-                        YouTube ID: {activeVideo.youtubeId} · {activeVideo.duration}
+                      <span className="text-xs font-mono tabular-nums text-[#EAB308] bg-[#0A0A0A] px-3 py-1 border border-[#262626]">
+                        ID: {activeVideo.youtubeId} · {activeVideo.duration}
                       </span>
                       <button
                         type="button"
-                        onClick={() => setPlayerMode('youtube-iframe')}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#11051C] bg-[#FACC15] rounded-md hover:bg-[#FDE047] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                        onClick={() =>
+                          setTheaterState((prev) =>
+                            transitionVideoTheater(prev, {
+                              type: 'SET_MODE',
+                              mode: 'youtube-iframe',
+                            })
+                          )
+                        }
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#0A0A0A] bg-[#EAB308] hover:bg-[#FACC15] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                       >
                         <Play className="w-3.5 h-3.5 fill-current" />
-                        <span>Load Live YouTube Embed</span>
+                        <span>{t('gameplay.loadEmbed')}</span>
                       </button>
                     </div>
 
-                    <div className="bg-[#11051C]/90 backdrop-blur-md border border-white/15 rounded-lg p-4">
-                      <div className="text-xs text-[#F472B6] font-mono tabular-nums mb-1">
-                        Active Frame Highlight #{selectedHighlightIdx + 1}:
+                    <div className="bg-[#0A0A0A] border border-[#262626] p-4">
+                      <div className="text-xs text-[#EAB308] font-mono tabular-nums mb-1">
+                        {t('gameplay.activeHighlight')} #{theaterState.selectedHighlightIdx + 1}:
                       </div>
-                      <div className="text-sm font-semibold text-white">
-                        {activeVideo.highlights[selectedHighlightIdx]}
+                      <div className="text-sm font-semibold text-[#F5F5F5]">
+                        {activeVideo.highlights[theaterState.selectedHighlightIdx]}
                       </div>
                     </div>
                   </div>
@@ -170,31 +179,45 @@ export function GameplayYoutubeSection() {
             </div>
 
             {/* Player Mode Controls & Explicit Non-Affiliation Bar */}
-            <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-white/10">
+            <div className="mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#262626]">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setPlayerMode('interactive-preview')}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                    playerMode === 'interactive-preview'
-                      ? 'bg-white/15 text-white'
-                      : 'text-slate-300 hover:text-white'
+                  onClick={() =>
+                    setTheaterState((prev) =>
+                      transitionVideoTheater(prev, {
+                        type: 'SET_MODE',
+                        mode: 'interactive-preview',
+                      })
+                    )
+                  }
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                    theaterState.mode === 'interactive-preview'
+                      ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
+                      : 'bg-[#0A0A0A] text-neutral-300 border border-[#262626] hover:text-white'
                   }`}
                 >
                   <Tv className="w-3.5 h-3.5" />
-                  <span>Frame Breakdown Canvas</span>
+                  <span>{t('gameplay.frameCanvas')}</span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setPlayerMode('youtube-iframe')}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                    playerMode === 'youtube-iframe'
-                      ? 'bg-[#FACC15] text-[#11051C] font-semibold'
-                      : 'text-slate-300 hover:text-white'
+                  onClick={() =>
+                    setTheaterState((prev) =>
+                      transitionVideoTheater(prev, {
+                        type: 'SET_MODE',
+                        mode: 'youtube-iframe',
+                      })
+                    )
+                  }
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                    theaterState.mode === 'youtube-iframe'
+                      ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
+                      : 'bg-[#0A0A0A] text-neutral-300 border border-[#262626] hover:text-white'
                   }`}
                 >
                   <Video className="w-3.5 h-3.5" />
-                  <span>YouTube Iframe Player</span>
+                  <span>{t('gameplay.iframePlayer')}</span>
                 </button>
               </div>
 
@@ -202,9 +225,11 @@ export function GameplayYoutubeSection() {
                 href={activeVideo.channelUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-[#FACC15] hover:underline whitespace-nowrap shrink-0"
+                className="inline-flex items-center gap-1.5 text-xs font-mono text-[#EAB308] hover:underline whitespace-nowrap shrink-0"
               >
-                <span>Open on YouTube ({activeVideo.viewsLabel})</span>
+                <span>
+                  {t('gameplay.openYoutube')} ({activeVideo.viewsLabel})
+                </span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -230,22 +255,26 @@ export function GameplayYoutubeSection() {
               </p>
 
               <div className="mb-6">
-                <div className="text-xs font-semibold text-slate-200 mb-2.5">
-                  Interactive Timestamp Highlights (Click to Inspect Frame):
+                <div className="text-xs font-mono text-neutral-200 mb-2.5">
+                  {t('gameplay.timestampsTitle')}:
                 </div>
                 <div className="space-y-2">
                   {activeVideo.highlights.map((hl, idx) => (
                     <button
                       key={idx}
                       type="button"
-                      onClick={() => {
-                        setSelectedHighlightIdx(idx);
-                        setPlayerMode('interactive-preview');
-                      }}
-                      className={`w-full text-left px-3.5 py-2.5 rounded-lg text-xs border transition-colors cursor-pointer ${
-                        selectedHighlightIdx === idx
-                          ? 'bg-[#280940] border-[#FACC15] text-white font-medium'
-                          : 'bg-[#1A052A] border-white/10 text-slate-300 hover:text-white'
+                      onClick={() =>
+                        setTheaterState((prev) =>
+                          transitionVideoTheater(prev, {
+                            type: 'SELECT_HIGHLIGHT',
+                            index: idx,
+                          })
+                        )
+                      }
+                      className={`border px-3 py-2 text-left text-xs transition-colors ${
+                        theaterState.selectedHighlightIdx === idx
+                          ? 'bg-[#0A0A0A] border-[#EAB308] text-[#F5F5F5] font-semibold'
+                          : 'bg-[#0A0A0A] border-[#262626] text-neutral-300 hover:text-white'
                       }`}
                     >
                       {hl}
@@ -256,10 +285,10 @@ export function GameplayYoutubeSection() {
             </div>
 
             {/* Mandatory Non-Affiliation Box Inside Gameplay Section */}
-            <div className="rounded-lg bg-[#1E062E] border border-[#F43F5E]/40 p-4 text-xs text-slate-200 leading-relaxed">
-              <div className="flex items-center gap-2 font-semibold text-[#FACC15] mb-1">
+            <div className="bg-[#0A0A0A] border border-[#262626] p-4 text-xs text-neutral-300 leading-relaxed">
+              <div className="flex items-center gap-2 font-semibold text-[#EAB308] mb-1">
                 <ShieldAlert className="w-4 h-4 shrink-0" />
-                <span>Unofficial Gameplay &amp; Non-Affiliation Statement</span>
+                <span>{t('gameplay.disclaimerTitle')}</span>
               </div>
               <p>
                 {activeVideo.nonAffiliationNote} All trademarks and game footage belong to their
@@ -269,14 +298,14 @@ export function GameplayYoutubeSection() {
           </div>
         </div>
 
-        {/* 5-Slice Angled Showcase (Matching the Reference Image's 5 Parallelogram Panels) */}
+        {/* 5-Sector Architecture Grid */}
         <div>
-          <div className="text-center mb-8">
-            <h3 className="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight">
-              Leonida Visual Overhaul Sectors
+          <div className="mb-8">
+            <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#F5F5F5] tracking-tight">
+              {t('gameplay.sectorsTitle')}
             </h3>
-            <p className="text-xs text-slate-300 mt-1">
-              Five specialized modding pillars engineered for high-contrast Vice City fidelity
+            <p className="text-xs text-neutral-400 mt-1">
+              {t('gameplay.sectorsSubtitle')}
             </p>
           </div>
 
@@ -284,15 +313,15 @@ export function GameplayYoutubeSection() {
             {ANGLED_MOD_SLICES.map((slice, idx) => (
               <div
                 key={slice.id}
-                className="group relative h-64 rounded-xl overflow-hidden border border-white/15 bg-[#140421] lg:-skew-x-3 transition-transform duration-150 hover:-translate-y-1"
+                className="group relative h-64 overflow-hidden border border-[#262626] bg-[#121212]"
               >
                 <ViceArtworkCanvas
                   theme={slice.theme}
                   className="w-full h-full"
                   label={slice.title}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0216] via-[#0D0216]/40 to-transparent p-4 flex flex-col justify-end lg:skew-x-3">
-                  <div className="text-[11px] font-mono tabular-nums text-[#FACC15] mb-1">
+                <div className="absolute inset-x-0 bottom-0 bg-black/85 border-t border-[#262626] p-4 flex flex-col justify-end">
+                  <div className="text-[11px] font-mono tabular-nums text-[#EAB308] mb-1">
                     0{idx + 1} · {slice.metric}
                   </div>
                   <div className="font-display text-lg font-bold text-white leading-tight">

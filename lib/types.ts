@@ -91,3 +91,15 @@ export interface SitemapShardInfo {
   samplePath: string;
   xmlEndpoint: string;
 }
+
+export type LocaleCode = 'en' | 'es' | 'fr' | 'pt';
+
+export interface LanguageConfig {
+  code: LocaleCode;
+  label: string;
+  nativeName: string;
+  enabled: boolean;
+  isDefault: boolean;
+}
+
+export type TranslationDictionary = Record<string, string>;

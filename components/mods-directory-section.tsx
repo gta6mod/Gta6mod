@@ -8,11 +8,14 @@ import {
   ExternalLink,
   Eye,
   Search,
+  Layers,
   SlidersHorizontal,
   X,
 } from 'lucide-react';
 import { MOD_CATEGORIES, filterAndSortMods } from '@/lib/mods-repository';
+import { DirectoryFilterState, transitionDirectoryFilter } from '@/lib/state-machines';
 import { ModCategory, ModItem } from '@/lib/types';
+import { useI18n } from './language-provider';
 import { ViceArtworkCanvas } from './vice-artwork-canvas';
 
 interface ModsDirectorySectionProps {
@@ -28,19 +31,22 @@ export function ModsDirectorySection({
   onToggleQueueMod,
   onJumpToCredits,
 }: ModsDirectorySectionProps) {
-  const [selectedCategory, setSelectedCategory] = useState<ModCategory>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'downloads' | 'rating' | 'newest'>('downloads');
-  const [inspectedModId, setInspectedModId] = useState<string>(mods[0]?.id || '');
+  const { t } = useI18n();
+  const [filterState, setFilterState] = useState<DirectoryFilterState>({
+    category: 'all',
+    searchQuery: '',
+    sortBy: 'downloads',
+    inspectedModId: mods[0]?.id || '',
+  });
 
   const filteredMods = filterAndSortMods(mods, {
-    category: selectedCategory,
-    searchQuery,
-    sortBy,
+    category: filterState.category,
+    searchQuery: filterState.searchQuery,
+    sortBy: filterState.sortBy,
   });
 
   const inspectedMod =
-    mods.find((m) => m.id === inspectedModId) || filteredMods[0] || mods[0];
+    mods.find((m) => m.id === filterState.inspectedModId) || filteredMods[0] || mods[0];
 
   const mosaicMods = mods.slice(0, 6);
 
@@ -48,26 +54,22 @@ export function ModsDirectorySection({
     <section
       id="mods"
       aria-labelledby="mods-heading"
-      className="py-20 px-6 lg:px-12 bg-gradient-to-b from-[#09020E] via-[#1B052C] to-[#0E031A] border-b border-[#FF2A85]/20"
+      className="py-20 px-6 lg:px-12 bg-[#0A0A0A] border-b border-[#262626]"
     >
       <div className="max-w-[1200px] mx-auto">
-        {/* Section Header with Cross-Section Navigation Link to Credits */}
+        {/* Section Header: Semantic Icon, Primary Title, Concise 1-Line Subtitle */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <p className="text-xs font-medium tracking-wider text-[#FF2A85] mb-2">
-              01. Leonida Modding Repository &amp; Custom Packages
-            </p>
+            <Layers className="w-6 h-6 text-[#EAB308] mb-3" aria-hidden="true" />
             <h2
               id="mods-heading"
-              className="font-display text-3xl sm:text-5xl font-bold text-white tracking-tight"
+              className="font-display text-3xl sm:text-5xl font-bold text-[#F5F5F5] tracking-tight"
               style={{ textWrap: 'balance' }}
             >
-              GTA 6 Mods Directory &amp; Staggered Vice Showcase
+              {t('mods.title')}
             </h2>
-            <p className="text-sm text-slate-300 max-w-2xl mt-2">
-              Browse community-engineered shaders, 1986 Vice widebody vehicles, Starfish Island
-              estates, and C# physics scripts. Each mod includes direct page links, technical
-              specifications, and verified creator credits.
+            <p className="text-sm text-neutral-300 max-w-2xl mt-2">
+              {t('mods.subtitle')}
             </p>
           </div>
 
@@ -75,9 +77,9 @@ export function ModsDirectorySection({
             <a
               href="#credits"
               onClick={onJumpToCredits}
-              className="px-4 py-2 text-xs font-medium text-[#00F0FF] bg-[#140421] hover:bg-white/10 border border-[#00F0FF]/30 rounded-lg transition-colors whitespace-nowrap shrink-0"
+              className="px-4 py-2 text-xs font-mono text-[#EAB308] bg-[#121212] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap shrink-0"
             >
-              View Mod Creator Credits →
+              {t('mods.viewCredits')} →
             </a>
           </div>
         </div>
@@ -98,12 +100,16 @@ export function ModsDirectorySection({
               <button
                 key={mod.id}
                 type="button"
-                onClick={() => setInspectedModId(mod.id)}
+                onClick={() =>
+                  setFilterState((prev) =>
+                    transitionDirectoryFilter(prev, { type: 'INSPECT_MOD', modId: mod.id })
+                  )
+                }
                 aria-label={`Inspect ${mod.title}`}
-                className={`group relative rounded-xl overflow-hidden border text-left transition-transform duration-150 hover:-translate-y-0.5 cursor-pointer ${staggerClass} ${
+                className={`group relative overflow-hidden border text-left transition-colors cursor-pointer ${staggerClass} ${
                   isSelected
-                    ? 'border-[#FACC15] ring-2 ring-[#FACC15]/50'
-                    : 'border-white/15 hover:border-[#FF2A85]/70'
+                    ? 'border-[#EAB308]'
+                    : 'border-[#262626] hover:border-neutral-500'
                 }`}
               >
                 <ViceArtworkCanvas
@@ -112,11 +118,11 @@ export function ModsDirectorySection({
                   className="w-full h-full"
                   label={mod.title}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#09020E] via-[#09020E]/40 to-transparent p-3.5 flex flex-col justify-end">
-                  <div className="text-[11px] text-[#FACC15] font-mono tabular-nums truncate">
+                <div className="absolute inset-x-0 bottom-0 bg-black/85 border-t border-[#262626] p-3 flex flex-col justify-end">
+                  <div className="text-[11px] text-[#EAB308] font-mono tabular-nums truncate">
                     {mod.version} · {mod.categoryLabel}
                   </div>
-                  <div className="text-xs sm:text-sm font-semibold text-white line-clamp-1 group-hover:text-[#FDE047] transition-colors">
+                  <div className="text-xs sm:text-sm font-semibold text-[#F5F5F5] line-clamp-1">
                     {mod.title}
                   </div>
                 </div>
@@ -126,26 +132,30 @@ export function ModsDirectorySection({
         </div>
 
         {/* Interactive Filter Controls Bar */}
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-6 mb-8 border-b border-white/10">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-6 mb-8 border-b border-[#262626]">
           {/* Interactive Category Segmented Buttons */}
           <div
             role="group"
             aria-label="Filter mods by category"
-            className="flex flex-wrap items-center gap-1 p-1 bg-[#12031E] rounded-lg border border-white/10"
+            className="flex flex-wrap items-center gap-1 p-1 bg-[#121212] border border-[#262626]"
           >
             {MOD_CATEGORIES.map((cat) => {
-              const active = selectedCategory === cat.id;
+              const active = filterState.category === cat.id;
               return (
                 <button
                   key={cat.id}
                   type="button"
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                    active
-                      ? 'bg-[#FACC15] text-[#09020E] font-semibold'
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
-                  }`}
-                >
+                  onClick={() =>
+                    setFilterState((prev) =>
+                      transitionDirectoryFilter(prev, { type: 'SET_CATEGORY', category: cat.id })
+                    )
+                  }
+                  className={`px-2.5 py-1.5 text-xs font-mono transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                                      active
+                                        ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
+                                        : 'text-neutral-300 hover:text-white'
+                                    }`}
+                                  >
                   {cat.label}
                 </button>
               );
@@ -162,30 +172,39 @@ export function ModsDirectorySection({
               <input
                 id="mod-search-input"
                 type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search mods, authors, shaders..."
-                className="w-full pl-9 pr-3 py-2 text-xs text-white bg-[#12031E] border border-white/15 rounded-lg placeholder:text-slate-400 focus:outline-none focus:border-[#FF2A85]"
+                value={filterState.searchQuery}
+                onChange={(e) =>
+                  setFilterState((prev) =>
+                    transitionDirectoryFilter(prev, { type: 'SET_QUERY', query: e.target.value })
+                  )
+                }
+                placeholder={t('mods.searchPlaceholder')}
+                className="w-full pl-9 pr-3 py-2 text-xs text-[#F5F5F5] bg-[#121212] border border-[#262626] placeholder:text-neutral-500 focus:outline-none focus:border-[#EAB308]"
               />
             </div>
 
             <div className="flex items-center gap-2">
-              <SlidersHorizontal className="w-4 h-4 text-slate-400 shrink-0" />
-              <label htmlFor="mod-sort-select" className="text-xs text-slate-300 whitespace-nowrap">
-                Sort by
+              <SlidersHorizontal className="w-4 h-4 text-neutral-400 shrink-0" />
+              <label htmlFor="mod-sort-select" className="text-xs text-neutral-300 whitespace-nowrap font-mono">
+                {t('mods.sortBy')}
               </label>
               <select
                 id="mod-sort-select"
-                value={sortBy}
-                onChange={(e) =>
-                  setSortBy(e.target.value as 'downloads' | 'rating' | 'newest')
-                }
-                className="px-3 py-2 text-xs text-white bg-[#12031E] border border-white/15 rounded-lg focus:outline-none focus:border-[#FF2A85]"
-              >
-                <option value="downloads">Most Downloaded</option>
-                <option value="rating">Highest Rated</option>
-                <option value="newest">Recently Updated</option>
-              </select>
+                value={filterState.sortBy}
+                                onChange={(e) =>
+                                  setFilterState((prev) =>
+                                    transitionDirectoryFilter(prev, {
+                                      type: 'SET_SORT',
+                                      sortBy: e.target.value as 'downloads' | 'rating' | 'newest',
+                                    })
+                                  )
+                                }
+                                className="px-3 py-2 text-xs text-[#F5F5F5] bg-[#121212] border border-[#262626] focus:outline-none focus:border-[#EAB308]"
+                              >
+                                <option value="downloads">{t('mods.sortDownloads')}</option>
+                                <option value="rating">{t('mods.sortRating')}</option>
+                                <option value="newest">{t('mods.sortNewest')}</option>
+                              </select>
             </div>
           </div>
         </div>
@@ -194,22 +213,22 @@ export function ModsDirectorySection({
         {inspectedMod && (
           <div
             aria-label="Selected Mod Technical Specification"
-            className="mb-10 rounded-xl bg-[#130420] border border-[#FF2A85]/40 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch"
+            className="mb-10 bg-[#121212] border border-[#262626] p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch"
           >
-            <div className="lg:col-span-5 relative rounded-lg overflow-hidden min-h-[240px]">
+            <div className="lg:col-span-5 relative overflow-hidden min-h-[240px] border border-[#262626]">
               <ViceArtworkCanvas
                 theme={inspectedMod.artworkTheme}
                 imageUrl={inspectedMod.imageUrl}
                 className="w-full h-full object-cover"
                 label={inspectedMod.title}
               />
-              <div className="absolute bottom-3 left-3 right-3 text-xs text-slate-200 font-mono tabular-nums bg-[#09020E]/90 backdrop-blur-sm px-3 py-2 rounded border border-white/15 flex items-center justify-between">
+              <div className="absolute bottom-3 left-3 right-3 text-xs text-neutral-200 font-mono tabular-nums bg-[#0A0A0A] px-3 py-2 border border-[#262626] flex items-center justify-between">
                 <span className="truncate">
                   /mods/{inspectedMod.category}/{inspectedMod.slug}
                 </span>
                 <Link
                   href={`/mods/${inspectedMod.category}/${inspectedMod.slug}`}
-                  className="text-[#FACC15] hover:underline ml-2 shrink-0"
+                  className="text-[#EAB308] hover:underline ml-2 shrink-0"
                 >
                   Open Page →
                 </Link>
@@ -218,7 +237,7 @@ export function ModsDirectorySection({
 
             <div className="lg:col-span-7 flex flex-col justify-between">
               <div>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-[#FACC15] font-mono tabular-nums mb-2">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-[#EAB308] font-mono tabular-nums mb-2">
                   <span>{inspectedMod.categoryLabel}</span>
                   <span aria-hidden="true">·</span>
                   <span>{inspectedMod.version}</span>
@@ -237,10 +256,10 @@ export function ModsDirectorySection({
                 </p>
 
                 <div className="space-y-1.5 mb-5">
-                  <div className="text-xs font-semibold text-[#00F0FF]">
-                    Architecture &amp; Technical Notes ({inspectedMod.compatibility}):
+                  <div className="text-xs font-mono text-[#EAB308]">
+                    {t('mods.techNotes')} ({inspectedMod.compatibility}):
                   </div>
-                  <ul className="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                  <ul className="text-xs text-neutral-300 space-y-1 list-disc list-inside">
                     {inspectedMod.technicalNotes.map((note, index) => (
                       <li key={index}>{note}</li>
                     ))}
@@ -264,19 +283,19 @@ export function ModsDirectorySection({
                 <div className="flex items-center gap-3">
                   <Link
                     href={`/mods/${inspectedMod.category}/${inspectedMod.slug}`}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-white bg-white/10 hover:bg-white/15 border border-white/15 rounded-lg transition-colors whitespace-nowrap shrink-0"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-mono text-[#F5F5F5] bg-[#0A0A0A] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap shrink-0"
                   >
-                    <span>Dedicated Mod Page</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-[#00F0FF]" />
+                    <span>{t('mods.dedicatedPage')}</span>
+                    <ExternalLink className="w-3.5 h-3.5 text-[#EAB308]" />
                   </Link>
 
                   <button
                     type="button"
                     onClick={() => onToggleQueueMod(inspectedMod.id)}
-                    className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                    className={`inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                       queuedModIds.includes(inspectedMod.id)
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'
-                        : 'bg-[#FACC15] text-[#09020E] hover:bg-[#FDE047]'
+                        ? 'bg-[#0A0A0A] text-[#EAB308] border border-[#EAB308]'
+                        : 'bg-[#EAB308] text-[#0A0A0A] hover:bg-[#FACC15]'
                     }`}
                   >
                     {queuedModIds.includes(inspectedMod.id) ? (
@@ -299,23 +318,24 @@ export function ModsDirectorySection({
 
         {/* Filtered Mods Grid */}
         {filteredMods.length === 0 ? (
-          <div className="rounded-xl bg-[#130420] border border-white/10 p-10 text-center">
-            <p className="text-base font-semibold text-white mb-2">
-              No mods matched &ldquo;{searchQuery}&rdquo;
-            </p>
-            <p className="text-xs text-slate-300 mb-4">
-              Try clearing your search query or switching to All Mods.
+          <div className="bg-[#121212] border border-[#262626] p-10 text-center">
+            <p className="text-sm font-mono text-[#F5F5F5] mb-4">
+              {t('mods.emptyState')}
             </p>
             <button
               type="button"
-              onClick={() => {
-                setSelectedCategory('all');
-                setSearchQuery('');
-              }}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#09020E] bg-[#FACC15] rounded-lg hover:bg-[#FDE047] transition-colors cursor-pointer"
+              onClick={() =>
+                setFilterState((prev) =>
+                  transitionDirectoryFilter(prev, {
+                    type: 'RESET_FILTERS',
+                    defaultModId: mods[0]?.id || '',
+                  })
+                )
+              }
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#0A0A0A] bg-[#EAB308] hover:bg-[#FACC15] transition-colors cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
-              <span>Reset Mod Filters</span>
+              <span>{t('mods.resetFilters')}</span>
             </button>
           </div>
         ) : (
@@ -327,10 +347,10 @@ export function ModsDirectorySection({
               return (
                 <article
                   key={mod.id}
-                  className={`rounded-xl bg-[#130420] border transition-colors flex flex-col justify-between overflow-hidden ${
+                  className={`bg-[#121212] border transition-colors flex flex-col justify-between overflow-hidden ${
                     isInspected
-                      ? 'border-[#FACC15]'
-                      : 'border-white/10 hover:border-[#FF2A85]/50'
+                      ? 'border-[#EAB308]'
+                      : 'border-[#262626] hover:border-neutral-500'
                   }`}
                 >
                   <div>
@@ -343,9 +363,9 @@ export function ModsDirectorySection({
                       />
                     </div>
 
-                    <div className="p-5">
-                      <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-400 font-mono tabular-nums mb-2">
-                        <span className="text-[#FF2A85]">{mod.categoryLabel}</span>
+                    <div className="p-5 border-t border-[#262626]">
+                      <div className="flex flex-wrap items-center gap-1.5 text-xs text-neutral-400 font-mono tabular-nums mb-2">
+                        <span className="text-[#EAB308]">{mod.categoryLabel}</span>
                         <span aria-hidden="true">·</span>
                         <span>{mod.version}</span>
                         <span aria-hidden="true">·</span>
@@ -365,10 +385,10 @@ export function ModsDirectorySection({
                         {mod.summary}
                       </p>
 
-                      <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
+                      <div className="flex items-center justify-between text-xs text-neutral-400 font-mono">
                         <Link
                           href={`/mods/${mod.category}/${mod.slug}`}
-                          className="text-[#00F0FF] hover:underline inline-flex items-center gap-1"
+                          className="text-[#EAB308] hover:underline inline-flex items-center gap-1"
                         >
                           <span>/mods/{mod.category}/{mod.slug.slice(0, 18)}...</span>
                           <ExternalLink className="w-3 h-3" />
@@ -394,23 +414,27 @@ export function ModsDirectorySection({
                     <div className="flex items-center gap-2 shrink-0">
                       <button
                         type="button"
-                        onClick={() => setInspectedModId(mod.id)}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-200 bg-white/5 hover:bg-white/10 rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                        onClick={() =>
+                          setFilterState((prev) =>
+                            transitionDirectoryFilter(prev, { type: 'INSPECT_MOD', modId: mod.id })
+                          )
+                        }
+                        className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-mono text-neutral-200 bg-[#0A0A0A] border border-[#262626] hover:border-[#EAB308] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                       >
                         <Eye className="w-3.5 h-3.5" />
-                        <span>Inspect</span>
+                        <span>{t('mods.inspect')}</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => onToggleQueueMod(mod.id)}
-                        className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                        className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                           isQueued
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'
-                            : 'bg-[#FACC15] text-[#09020E] hover:bg-[#FDE047]'
+                            ? 'bg-[#0A0A0A] text-[#EAB308] border border-[#EAB308]'
+                            : 'bg-[#EAB308] text-[#0A0A0A] hover:bg-[#FACC15]'
                         }`}
                       >
-                        {isQueued ? 'Queued' : 'Queue'}
+                        {isQueued ? t('mods.queuedAction') : t('mods.queueAction')}
                       </button>
                     </div>
                   </div>

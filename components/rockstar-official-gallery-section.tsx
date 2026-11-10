@@ -9,18 +9,20 @@ import {
   Info,
   Maximize2,
   Package,
-  ShieldAlert,
-  Sparkles,
   X,
 } from 'lucide-react';
 import { OFFICIAL_VI_ASSETS } from '@/lib/mods-repository';
+import { LightboxState, transitionLightbox } from '@/lib/state-machines';
 import { withBasePath } from '@/lib/utils';
+import { useI18n } from './language-provider';
 
 export function RockstarOfficialGallerySection() {
+  const { t } = useI18n();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [activeScreenshot, setActiveScreenshot] = useState<
-    (typeof OFFICIAL_VI_ASSETS.screenshots4k)[0] | null
-  >(null);
+  const [lightboxState, setLightboxState] = useState<LightboxState>({
+    status: 'closed',
+    activeShotId: null,
+  });
 
   const categories = [
     'All',
@@ -39,30 +41,30 @@ export function RockstarOfficialGallerySection() {
       ? screenshots
       : screenshots.filter((s) => s.category.toLowerCase().includes(selectedCategory.toLowerCase()));
 
+  const activeScreenshot =
+    lightboxState.status === 'inspecting'
+      ? screenshots.find((s) => s.id === lightboxState.activeShotId) || null
+      : null;
+
   return (
     <section
       id="official-gallery"
       aria-labelledby="official-gallery-heading"
-      className="py-20 px-6 lg:px-12 bg-gradient-to-b from-[#09020E] via-[#1C0526] to-[#0A0210] border-b border-[#FF2A85]/20"
+      className="py-20 px-6 lg:px-12 bg-[#0A0A0A] border-b border-[#262626]"
     >
       <div className="max-w-[1200px] mx-auto">
-        {/* Section Header */}
+        {/* Section Header: Semantic Icon, Primary Title, Concise 1-Line Subtitle */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF2A85]/15 border border-[#FF2A85]/40 text-[#FF2A85] text-xs font-mono mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-[#FACC15]" />
-              <span>Official Rockstar Games VI Media Archive · Scraped Assets</span>
-            </div>
+            <Camera className="w-6 h-6 text-[#EAB308] mb-3" aria-hidden="true" />
             <h2
               id="official-gallery-heading"
-              className="font-display text-3xl sm:text-5xl font-bold text-white tracking-tight"
+              className="font-display text-3xl sm:text-5xl font-bold text-[#F5F5F5] tracking-tight"
             >
-              Official 4K Launch Gallery &amp; Lore Archive
+              {t('official.title')}
             </h2>
-            <p className="text-sm text-slate-300 max-w-2xl mt-2 leading-relaxed">
-              Archived directly from <span className="font-mono text-[#FACC15]">rockstargames.com/VI</span>.
-              Explore authentic 3840×2160 screenshots of Leonida, official Jason &amp; Lucia narrative
-              synopsis, and pre-order bonuses.
+            <p className="text-sm text-neutral-300 max-w-2xl mt-2">
+              {t('official.subtitle')}
             </p>
           </div>
 
@@ -71,65 +73,60 @@ export function RockstarOfficialGallerySection() {
               href="https://www.rockstargames.com/VI"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#09020E] bg-[#FACC15] hover:bg-[#FDE047] rounded-lg transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#0A0A0A] bg-[#EAB308] hover:bg-[#FACC15] transition-colors whitespace-nowrap shrink-0"
             >
-              <span>Visit Official VI Website</span>
+              <span>{t('official.visitSite')}</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
         </div>
 
         {/* Official Story Spotlight Box */}
-        <div className="mb-14 rounded-2xl bg-gradient-to-r from-[#1E0533] via-[#33083B] to-[#160324] border border-[#FF2A85]/40 p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="mb-14 bg-[#121212] border border-[#262626] p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7 space-y-4">
-            <div className="flex items-center gap-2 text-xs font-mono text-[#00F0FF]">
-              <span>Vice City, USA · State of Leonida</span>
-              <span aria-hidden="true">·</span>
-              <span className="text-[#FACC15]">November 19, 2026</span>
+            <div className="flex items-center gap-2 text-xs font-mono text-[#EAB308]">
+              <span>{t('official.storyMeta')}</span>
             </div>
-            <h3 className="font-display text-2xl sm:text-3xl font-bold text-white leading-snug">
-              &ldquo;The Darkest Side of the Sunniest Place in America&rdquo;
+            <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#F5F5F5] leading-snug">
+              {t('official.storyHeadline')}
             </h3>
-            <p className="text-sm text-slate-200 leading-relaxed italic bg-black/30 p-4 rounded-xl border border-white/10">
-              &ldquo;Jason and Lucia have always known the deck is stacked against them. But when an easy
-              score goes wrong, they find themselves on the darkest side of the sunniest place in
-              America, in the middle of a criminal conspiracy stretching across the state of
-              Leonida — forced to rely on each other more than ever if they want to make it out alive.&rdquo;
+            <p className="text-sm text-neutral-200 leading-relaxed bg-[#0A0A0A] p-4 border border-[#262626]">
+              {t('official.storyQuote')}
             </p>
-            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs">
-              <span className="px-3 py-1.5 rounded-md bg-white/10 text-white font-medium">
-                Protagonists: <strong>Lucia &amp; Jason</strong>
+            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs font-mono">
+              <span className="px-3 py-1.5 bg-[#0A0A0A] border border-[#262626] text-neutral-200">
+                {t('official.protagonists')}
               </span>
-              <span className="px-3 py-1.5 rounded-md bg-white/10 text-white font-medium">
-                Platforms: <strong>PlayStation 5 · Xbox Series X|S</strong>
+              <span className="px-3 py-1.5 bg-[#0A0A0A] border border-[#262626] text-neutral-200">
+                {t('official.platforms')}
               </span>
-              <span className="px-3 py-1.5 rounded-md bg-[#FACC15]/20 text-[#FACC15] border border-[#FACC15]/40 font-medium">
-                Plays Best on PS5
+              <span className="px-3 py-1.5 bg-[#0A0A0A] text-[#EAB308] border border-[#EAB308]/50">
+                {t('official.ps5Note')}
               </span>
             </div>
           </div>
 
-          <div className="lg:col-span-5 relative rounded-xl overflow-hidden aspect-[16/10] border border-white/20 shadow-2xl group">
+          <div className="lg:col-span-5 relative overflow-hidden aspect-[16/10] border border-[#262626] bg-[#0A0A0A]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={withBasePath(OFFICIAL_VI_ASSETS.heroPoster)}
               alt="Grand Theft Auto VI Official Poster Lucia and Jason"
-              className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-full object-cover object-top"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-              <div className="text-xs text-white font-semibold">
-                Official Key Art Poster · Jason &amp; Lucia
+            <div className="absolute bottom-0 inset-x-0 bg-black/80 border-t border-[#262626] px-4 py-2">
+              <div className="text-xs text-[#F5F5F5] font-mono">
+                {t('official.posterCaption')}
               </div>
             </div>
           </div>
         </div>
 
         {/* 4K Screenshot Category Segmented Filter */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-white/10">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-4 border-b border-[#262626]">
           <div
             role="group"
             aria-label="Filter 4K screenshots by sector"
-            className="flex flex-wrap items-center gap-1.5 p-1 bg-[#12031E] rounded-lg border border-white/10"
+            className="flex flex-wrap items-center gap-1 p-1 bg-[#121212] border border-[#262626]"
           >
             {categories.map((cat) => {
               const active = selectedCategory === cat;
@@ -138,10 +135,10 @@ export function RockstarOfficialGallerySection() {
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer ${
+                  className={`px-3 py-1.5 text-xs font-mono transition-colors cursor-pointer ${
                     active
-                      ? 'bg-[#FF2A85] text-white font-semibold'
-                      : 'text-slate-300 hover:text-white hover:bg-white/5'
+                      ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
+                      : 'text-neutral-300 hover:text-white'
                   }`}
                 >
                   {cat}
@@ -150,9 +147,11 @@ export function RockstarOfficialGallerySection() {
             })}
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
-            <Camera className="w-3.5 h-3.5 text-[#00F0FF]" />
-            <span>Showing {filteredShots.length} 4K (3840×2160) captures</span>
+          <div className="flex items-center gap-2 text-xs text-neutral-400 font-mono tabular-nums">
+            <Camera className="w-3.5 h-3.5 text-[#EAB308]" />
+            <span>
+              {filteredShots.length} · {t('official.showingCaptures')}
+            </span>
           </div>
         </div>
 
@@ -161,7 +160,7 @@ export function RockstarOfficialGallerySection() {
           {filteredShots.map((shot) => (
             <div
               key={shot.id}
-              className="group relative rounded-xl overflow-hidden bg-[#12031E] border border-white/15 hover:border-[#FACC15] transition-all flex flex-col justify-between"
+              className="group relative overflow-hidden bg-[#121212] border border-[#262626] hover:border-[#EAB308] transition-colors flex flex-col justify-between"
             >
               <div className="relative aspect-video overflow-hidden bg-black/60">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -169,35 +168,43 @@ export function RockstarOfficialGallerySection() {
                   src={withBasePath(shot.url)}
                   alt={shot.title}
                   loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-full object-cover"
                 />
                 <button
                   type="button"
-                  onClick={() => setActiveScreenshot(shot)}
-                  className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-xs font-semibold cursor-pointer"
+                  onClick={() =>
+                    setLightboxState((prev) =>
+                      transitionLightbox(prev, { type: 'OPEN_SHOT', shotId: shot.id })
+                    )
+                  }
+                  className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 text-white text-xs font-mono cursor-pointer"
                 >
-                  <Maximize2 className="w-4 h-4 text-[#FACC15]" />
-                  <span>Inspect 4K Master (3840×2160)</span>
+                  <Maximize2 className="w-4 h-4 text-[#EAB308]" />
+                  <span>{t('official.inspect4k')}</span>
                 </button>
-                <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#09020E]/80 text-[#FACC15] border border-white/10">
+                <div className="absolute top-2.5 right-2.5 px-2 py-0.5 text-[10px] font-mono font-bold bg-[#0A0A0A] text-[#EAB308] border border-[#262626]">
                   4K UHD
                 </div>
               </div>
 
-              <div className="p-4 flex items-center justify-between gap-3">
+              <div className="p-4 flex items-center justify-between gap-3 border-t border-[#262626]">
                 <div>
-                  <div className="text-[11px] font-mono text-[#FF2A85] mb-0.5">
+                  <div className="text-[11px] font-mono text-[#EAB308] mb-0.5">
                     {shot.category}
                   </div>
-                  <h4 className="text-sm font-semibold text-white group-hover:text-[#FACC15] transition-colors">
+                  <h4 className="text-sm font-semibold text-[#F5F5F5]">
                     {shot.title}
                   </h4>
                 </div>
                 <button
                   type="button"
-                  onClick={() => setActiveScreenshot(shot)}
-                  className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white transition-colors cursor-pointer"
-                  title="Expand to Fullscreen"
+                  onClick={() =>
+                    setLightboxState((prev) =>
+                      transitionLightbox(prev, { type: 'OPEN_SHOT', shotId: shot.id })
+                    )
+                  }
+                  className="p-2 bg-[#0A0A0A] border border-[#262626] hover:border-[#EAB308] text-neutral-300 hover:text-white transition-colors cursor-pointer"
+                  title={t('official.inspect4k')}
                 >
                   <Eye className="w-4 h-4" />
                 </button>
@@ -209,15 +216,15 @@ export function RockstarOfficialGallerySection() {
         {/* Official Game Editions & Pre-Order Packs Strip */}
         <div className="mb-14">
           <div className="flex items-center gap-2 mb-6">
-            <Package className="w-5 h-5 text-[#FACC15]" />
-            <h3 className="font-display text-2xl font-bold text-white tracking-tight">
-              Official GTA 6 Editions &amp; Pre-Order Bonuses
+            <Package className="w-5 h-5 text-[#EAB308]" />
+            <h3 className="font-display text-2xl font-bold text-[#F5F5F5] tracking-tight">
+              {t('official.editionsTitle')}
             </h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Ultimate Edition */}
-            <div className="rounded-xl overflow-hidden bg-[#130420] border border-white/15 flex flex-col justify-between">
+            <div className="overflow-hidden bg-[#121212] border border-[#262626] flex flex-col justify-between">
               <div className="relative aspect-[16/10] bg-black">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -226,20 +233,21 @@ export function RockstarOfficialGallerySection() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="p-5">
-                <span className="text-[11px] font-mono text-[#FACC15] font-semibold">
-                  Official Game Release
+              <div className="p-5 border-t border-[#262626]">
+                <span className="text-[11px] font-mono text-[#EAB308] font-semibold">
+                  {t('official.ultimateLabel')}
                 </span>
-                <h4 className="text-lg font-bold text-white mt-1 mb-2">Ultimate Edition</h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  An exclusive collection of items threaded across all aspects of Jason and Lucia’s story
-                  across Leonida.
+                <h4 className="text-lg font-bold text-[#F5F5F5] mt-1 mb-2">
+                  {t('official.ultimateTitle')}
+                </h4>
+                <p className="text-xs text-neutral-300 leading-relaxed">
+                  {t('official.ultimateDesc')}
                 </p>
               </div>
             </div>
 
             {/* Vintage Vice City Pack */}
-            <div className="rounded-xl overflow-hidden bg-[#130420] border border-[#FF2A85]/35 flex flex-col justify-between">
+            <div className="overflow-hidden bg-[#121212] border border-[#262626] flex flex-col justify-between">
               <div className="relative aspect-[16/10] bg-black">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -248,20 +256,21 @@ export function RockstarOfficialGallerySection() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="p-5">
-                <span className="text-[11px] font-mono text-[#FF2A85] font-semibold">
-                  Pre-Order Bonus Pack
+              <div className="p-5 border-t border-[#262626]">
+                <span className="text-[11px] font-mono text-[#EAB308] font-semibold">
+                  {t('official.vintageLabel')}
                 </span>
-                <h4 className="text-lg font-bold text-white mt-1 mb-2">Vintage Vice City Pack</h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Pre-order to get unique benefits and throwback aesthetics that flash back to when the
-                  neon burned brightest in 1980s Vice City.
+                <h4 className="text-lg font-bold text-[#F5F5F5] mt-1 mb-2">
+                  {t('official.vintageTitle')}
+                </h4>
+                <p className="text-xs text-neutral-300 leading-relaxed">
+                  {t('official.vintageDesc')}
                 </p>
               </div>
             </div>
 
             {/* Collector's Box */}
-            <div className="rounded-xl overflow-hidden bg-[#130420] border border-white/15 flex flex-col justify-between">
+            <div className="overflow-hidden bg-[#121212] border border-[#262626] flex flex-col justify-between">
               <div className="relative aspect-[16/10] bg-black">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -270,14 +279,15 @@ export function RockstarOfficialGallerySection() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="p-5">
-                <span className="text-[11px] font-mono text-[#00F0FF] font-semibold">
-                  Apparel &amp; Collectibles
+              <div className="p-5 border-t border-[#262626]">
+                <span className="text-[11px] font-mono text-[#EAB308] font-semibold">
+                  {t('official.merchLabel')}
                 </span>
-                <h4 className="text-lg font-bold text-white mt-1 mb-2">The Vice City Collection</h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Premium apparel, physical collectibles, and authentic Rockstar Games propaganda
-                  merchandise.
+                <h4 className="text-lg font-bold text-[#F5F5F5] mt-1 mb-2">
+                  {t('official.merchTitle')}
+                </h4>
+                <p className="text-xs text-neutral-300 leading-relaxed">
+                  {t('official.merchDesc')}
                 </p>
               </div>
             </div>
@@ -285,21 +295,20 @@ export function RockstarOfficialGallerySection() {
         </div>
 
         {/* Music, Soundtrack & Radio Stations Card */}
-        <div className="rounded-xl bg-[#11031C] border border-white/15 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="bg-[#121212] border border-[#262626] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-start gap-4">
-            <div className="p-3 rounded-xl bg-[#FF2A85]/20 text-[#FF2A85] shrink-0">
-              <Disc3 className="w-8 h-8 animate-spin-slow" />
+            <div className="p-3 bg-[#0A0A0A] border border-[#262626] text-[#EAB308] shrink-0">
+              <Disc3 className="w-6 h-6" />
             </div>
             <div>
-              <div className="text-xs font-mono text-[#FACC15] mb-1">
-                Official Score &amp; In-Game Audio
+              <div className="text-xs font-mono text-[#EAB308] mb-1">
+                {t('official.audioLabel')}
               </div>
-              <h4 className="text-xl font-bold text-white mb-2">
-                In-Game Radio Stations, Soundtrack &amp; Score
+              <h4 className="text-xl font-bold text-[#F5F5F5] mb-2">
+                {t('official.audioTitle')}
               </h4>
-              <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
-                Experience the authentic soundscape of Leonida with an eclectic blend of 1980s synthwave,
-                Latin trap, hip-hop, and coastal rock curated across in-game radio stations.
+              <p className="text-xs text-neutral-300 max-w-xl leading-relaxed">
+                {t('official.audioDesc')}
               </p>
             </div>
           </div>
@@ -309,20 +318,17 @@ export function RockstarOfficialGallerySection() {
               href="https://www.rockstargames.com/VI"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 text-xs font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/20 rounded-lg transition-colors whitespace-nowrap"
+              className="px-4 py-2 text-xs font-mono text-[#F5F5F5] bg-[#0A0A0A] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap"
             >
-              Explore Music on Rockstar
+              {t('official.audioCta')}
             </a>
           </div>
         </div>
 
         {/* Disclaimer */}
-        <div className="mt-8 flex items-center gap-2 text-xs text-slate-400">
-          <Info className="w-4 h-4 text-[#FACC15] shrink-0" />
-          <span>
-            Screenshots and story descriptions are © Rockstar Games / Take-Two Interactive, archived for
-            community modding context and aesthetic inspiration.
-          </span>
+        <div className="mt-8 flex items-center gap-2 text-xs text-neutral-400">
+          <Info className="w-4 h-4 text-[#EAB308] shrink-0" />
+          <span>{t('official.copyrightNote')}</span>
         </div>
       </div>
 
@@ -331,22 +337,24 @@ export function RockstarOfficialGallerySection() {
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between p-4 sm:p-8"
+          className="fixed inset-0 z-50 bg-[#0A0A0A] flex flex-col justify-between p-4 sm:p-8"
         >
-          <div className="flex items-center justify-between text-white pb-3 border-b border-white/10">
+          <div className="flex items-center justify-between text-[#F5F5F5] pb-3 border-b border-[#262626]">
             <div>
-              <span className="text-xs font-mono text-[#FACC15] mr-2">
+              <span className="text-xs font-mono text-[#EAB308] mr-2">
                 {activeScreenshot.category}
               </span>
               <span className="text-sm font-semibold">{activeScreenshot.title}</span>
-              <span className="text-xs text-slate-400 ml-3 font-mono">
-                Master 4K (3840×2160 UHD)
+              <span className="text-xs text-neutral-400 ml-3 font-mono">
+                3840x2160 UHD
               </span>
             </div>
             <button
               type="button"
-              onClick={() => setActiveScreenshot(null)}
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+              onClick={() =>
+                setLightboxState((prev) => transitionLightbox(prev, { type: 'CLOSE_SHOT' }))
+              }
+              className="p-2 bg-[#121212] border border-[#262626] hover:border-[#EAB308] text-white transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -361,14 +369,16 @@ export function RockstarOfficialGallerySection() {
             />
           </div>
 
-          <div className="flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-white/10">
-            <span>Direct local file: {activeScreenshot.url}</span>
+          <div className="flex items-center justify-between text-xs text-neutral-400 pt-3 border-t border-[#262626]">
+            <span className="font-mono">{activeScreenshot.url}</span>
             <button
               type="button"
-              onClick={() => setActiveScreenshot(null)}
-              className="px-4 py-1.5 rounded-md bg-[#FACC15] text-[#09020E] font-semibold hover:bg-[#FDE047] transition-colors cursor-pointer"
+              onClick={() =>
+                setLightboxState((prev) => transitionLightbox(prev, { type: 'CLOSE_SHOT' }))
+              }
+              className="px-4 py-1.5 bg-[#EAB308] text-[#0A0A0A] font-semibold hover:bg-[#FACC15] transition-colors cursor-pointer"
             >
-              Close Lightbox
+              {t('official.closeLightbox')}
             </button>
           </div>
         </div>

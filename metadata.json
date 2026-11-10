@@ -1,6 +1,5 @@
 {
   "name": "Gta6mod – Vice City Modding Directory & Gameplay Hub",
   "description": "Explore community mods, graphics shaders, vehicle packs, YouTube gameplay showcases, creator credits, and a scalable multi-thousand page XML sitemap for GTA 6.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "requestFramePermissions": []
 }

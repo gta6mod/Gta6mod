@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Barlow_Condensed, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
+import { LanguageProvider } from '@/components/language-provider';
 import './globals.css';
 
 const barlowCondensed = Barlow_Condensed({
@@ -49,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     name: 'Gta6mod',
     description:
       'Community modding directory, YouTube GTA 6 gameplay index, and creator credits repository. Independent platform not affiliated with Rockstar Games or Grand Theft Auto VI.',
-    url: process.env.APP_URL || 'https://gta6mod.community',
+    url: process.env.APP_URL || 'https://gta6mod.github.io/Gta6mod/',
     potentialAction: {
       '@type': 'SearchAction',
       target: '{search_term_string}',
@@ -71,9 +72,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body
         suppressHydrationWarning
-        className="bg-[#11051C] text-[#F8FAFC] font-sans antialiased selection:bg-[#F43F5E] selection:text-white min-h-screen"
+        className="bg-[#0A0A0A] text-[#F5F5F5] font-sans antialiased selection:bg-[#EAB308] selection:text-[#0A0A0A] min-h-screen"
       >
-        {children}
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

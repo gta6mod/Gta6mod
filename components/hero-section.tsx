@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
-import { ArrowRight, Camera, Code2, Film, Layers, ShieldAlert, Sparkles } from 'lucide-react';
+import { ArrowRight, Camera, Code2, Database, Film, Globe, ShieldAlert, Users } from 'lucide-react';
+import { useI18n } from './language-provider';
+import { LocaleCode } from '@/lib/types';
 import { ViceArtworkCanvas } from './vice-artwork-canvas';
 
 export type ActiveSectionView = 'all' | 'mods' | 'official' | 'credits' | 'gameplay' | 'sitemap';
@@ -19,10 +21,13 @@ export function HeroSection({
   activeView,
   onSelectView,
 }: HeroSectionProps) {
+  const { locale, languages, setLocale, t } = useI18n();
+  const enabledLanguages = languages.filter((l) => l.enabled);
+
   return (
-    <div className="relative border-b border-[#FF2A85]/25">
+    <div className="relative border-b border-[#262626] bg-[#0A0A0A]">
       {/* Top Navigation Bar: Strict 3-Zone Contract */}
-      <header className="sticky top-0 z-40 flex items-center justify-between gap-8 px-6 lg:px-12 py-4 bg-[#09020E]/90 backdrop-blur-md border-b border-white/10">
+      <header className="sticky top-0 z-40 flex items-center justify-between gap-6 px-6 lg:px-12 py-4 bg-[#0A0A0A] border-b border-[#262626]">
         {/* Zone 1: Single text element wordmark */}
         <a
           href="#top"
@@ -40,49 +45,73 @@ export function HeroSection({
           <a
             href="#mods"
             onClick={() => onSelectView('all', 'mods')}
-            className="hover:text-[#FF2A85] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+            className="hover:text-[#EAB308] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
           >
-            Mods
+            {t('nav.mods')}
           </a>
           <a
             href="#official-gallery"
             onClick={() => onSelectView('all', 'official-gallery')}
-            className="hover:text-[#00F0FF] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5"
+            className="hover:text-[#EAB308] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00F0FF] animate-pulse" />
-            <span>Official 4K Media</span>
+            {t('nav.official')}
           </a>
           <a
             href="#gameplay"
             onClick={() => onSelectView('all', 'gameplay')}
-            className="hover:text-[#FF2A85] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+            className="hover:text-[#EAB308] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
           >
-            Gameplay
+            {t('nav.gameplay')}
           </a>
           <a
             href="#credits"
             onClick={() => onSelectView('all', 'credits')}
-            className="hover:text-[#FF2A85] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+            className="hover:text-[#EAB308] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
           >
-            Credits
+            {t('nav.credits')}
           </a>
           <a
             href="#sitemap"
             onClick={() => onSelectView('all', 'sitemap')}
-            className="hover:text-[#FF2A85] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+            className="hover:text-[#EAB308] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
           >
-            Sitemap
+            {t('nav.sitemap')}
           </a>
         </nav>
 
-        {/* Zone 3: 1 Primary Action */}
-        <div className="flex items-center shrink-0">
+        {/* Zone 3: Language Switcher + Admin + Primary Action */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div
+            role="group"
+            aria-label="Language selector"
+            className="inline-flex items-center border border-[#262626] bg-[#121212]"
+          >
+            <Globe className="w-3.5 h-3.5 text-neutral-400 ml-2 mr-1 shrink-0" />
+            {enabledLanguages.map((lang) => {
+              const isCurrent = locale === lang.code;
+              return (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => setLocale(lang.code as LocaleCode)}
+                  className={`px-2 py-1.5 text-[11px] font-mono uppercase transition-colors cursor-pointer ${
+                    isCurrent
+                      ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
+                      : 'text-neutral-300 hover:text-white'
+                  }`}
+                >
+                  {lang.label}
+                </button>
+              );
+            })}
+          </div>
+
           <button
             type="button"
             onClick={() => onSelectView('all', 'submit-mod')}
-            className="px-4 py-2 text-xs font-semibold text-[#09020E] bg-[#FACC15] rounded-md hover:bg-[#FDE047] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            className="px-4 py-2 text-xs font-semibold text-[#0A0A0A] bg-[#EAB308] hover:bg-[#FACC15] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
           >
-            Submit Mod
+            {t('nav.submitMod')}
           </button>
         </div>
       </header>
@@ -99,133 +128,122 @@ export function HeroSection({
           label="Leonida Sunset Boulevard and Muscle Car Backdrop"
         />
 
-        <div className="relative z-10 max-w-[1200px] w-full mx-auto px-6 pt-12 pb-10 flex flex-col items-center text-center">
-          {/* Iconic VI Sunset Emblem Lockup */}
-          <div className="mb-4 inline-flex flex-col items-center">
-            <div className="font-display text-5xl sm:text-6xl font-bold tracking-tight bg-gradient-to-b from-[#FDE047] via-[#FF2A85] to-[#9333EA] bg-clip-text text-transparent select-none leading-none">
-              VI · MOD HUB
-            </div>
-            <p className="text-xs font-medium tracking-widest text-[#00F0FF] mt-2">
-              Welcome to Leonida · High-Contrast Vice City Modding &amp; Media Index
-            </p>
-          </div>
+        <div className="relative z-10 max-w-[1200px] w-full mx-auto px-6 pt-16 pb-12 flex flex-col items-center text-center">
+          {/* Clean Hierarchy: Semantic Icon, Primary H1 Title, Concise 1-Line Subtitle */}
+          <Database className="w-7 h-7 text-[#EAB308] mb-4" aria-hidden="true" />
 
-          {/* Dominant Display Headline */}
           <h1
-            className="font-display font-bold text-white tracking-tight max-w-3xl mb-4"
+            className="font-display font-bold text-[#F5F5F5] tracking-tight max-w-3xl mb-3"
             style={{
               fontSize: 'clamp(2.5rem, 5vw, 4.25rem)',
               lineHeight: 1.04,
               textWrap: 'balance',
             }}
           >
-            Next-Gen Vice City Mods, Shaders &amp; Community Gameplay Archive
+            {t('hero.title')}
           </h1>
 
-          <p className="text-base text-slate-200 max-w-2xl leading-relaxed mb-8">
-            Explore ray-traced Leonida sunset shaders, custom 1980s widebody supercars, Starfish
-            Island waterfront estates, YouTube gameplay analyses, creator credits, and a dynamically
-            updated multi-thousand page <code className="font-mono text-[#FACC15]">sitemap.xml</code>.
+          <p className="text-sm sm:text-base text-neutral-300 max-w-2xl leading-relaxed mb-8">
+            {t('hero.subtitle')}
           </p>
 
           {/* Centerpiece High-Contrast Telemetry & Index Box */}
-          <div className="w-full max-w-xl rounded-xl bg-[#0D0216]/90 backdrop-blur-md border border-[#FF2A85]/45 p-6 mb-8">
-            <div className="flex items-center justify-between text-xs text-slate-300 mb-4 pb-3 border-b border-white/10">
-              <span>Leonida Community Mod Index &amp; Crawler Feed</span>
-              <span className="font-mono tabular-nums text-[#00F0FF]">
-                /sitemap.xml · {totalIndexedUrls.toLocaleString()} Live URLs
+          <div className="w-full max-w-xl bg-[#0A0A0A] border border-[#262626] p-6 mb-8">
+            <div className="flex items-center justify-between text-xs text-neutral-300 mb-4 pb-3 border-b border-[#262626]">
+              <span>{t('hero.telemetryTitle')}</span>
+              <span className="font-mono tabular-nums text-[#EAB308]">
+                /sitemap.xml · {totalIndexedUrls.toLocaleString()} URLs
               </span>
             </div>
 
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="font-display text-3xl sm:text-4xl font-bold text-white font-mono tabular-nums">
+                <div className="font-display text-3xl sm:text-4xl font-bold text-[#F5F5F5] font-mono tabular-nums">
                   {totalModsCount}
                 </div>
-                <div className="text-xs text-slate-300 mt-1">Featured Flagship Mods</div>
+                <div className="text-xs text-neutral-400 mt-1">{t('hero.statMods')}</div>
               </div>
-              <div className="border-x border-white/10 px-2">
-                <div className="font-display text-3xl sm:text-4xl font-bold text-[#FACC15] font-mono tabular-nums">
+              <div className="border-x border-[#262626] px-2">
+                <div className="font-display text-3xl sm:text-4xl font-bold text-[#EAB308] font-mono tabular-nums">
                   {totalIndexedUrls.toLocaleString()}
                 </div>
-                <div className="text-xs text-slate-300 mt-1">Dynamic Sitemap Pages</div>
+                <div className="text-xs text-neutral-400 mt-1">{t('hero.statUrls')}</div>
               </div>
               <div>
-                <div className="font-display text-3xl sm:text-4xl font-bold text-[#FF2A85] font-mono tabular-nums">
-                  60 FPS
+                <div className="font-display text-3xl sm:text-4xl font-bold text-[#F5F5F5] font-mono tabular-nums">
+                  4K / 60
                 </div>
-                <div className="text-xs text-slate-300 mt-1">4K YouTube Showcases</div>
+                <div className="text-xs text-neutral-400 mt-1">{t('hero.statVideo')}</div>
               </div>
             </div>
           </div>
 
           {/* Primary Action & Quick Section Jumps */}
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
               onClick={() => onSelectView('all', 'mods')}
-              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-[#09020E] bg-[#FACC15] rounded-lg hover:bg-[#FDE047] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-[#0A0A0A] bg-[#EAB308] hover:bg-[#FACC15] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
-              <span>Explore Mods Directory</span>
+              <span>{t('hero.ctaMods')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
             <button
               type="button"
               onClick={() => onSelectView('all', 'official-gallery')}
-              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-white bg-[#00F0FF]/15 hover:bg-[#00F0FF]/25 border border-[#00F0FF]/40 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-[#F5F5F5] bg-[#0A0A0A] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
-              <Camera className="w-4 h-4 text-[#00F0FF]" />
-              <span>Official 4K Screenshots</span>
+              <Camera className="w-4 h-4 text-[#EAB308]" />
+              <span>{t('hero.ctaOfficial')}</span>
             </button>
 
             <button
               type="button"
               onClick={() => onSelectView('all', 'credits')}
-              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-white bg-[#FF2A85]/20 hover:bg-[#FF2A85]/30 border border-[#FF2A85]/50 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-[#F5F5F5] bg-[#0A0A0A] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
-              <Sparkles className="w-4 h-4 text-[#FACC15]" />
-              <span>View Creator Credits</span>
+              <Users className="w-4 h-4 text-[#EAB308]" />
+              <span>{t('hero.ctaCredits')}</span>
             </button>
 
             <a
               href="#gameplay"
               onClick={() => onSelectView('all', 'gameplay')}
-              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-white bg-white/10 hover:bg-white/15 border border-white/20 rounded-lg transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-[#F5F5F5] bg-[#0A0A0A] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap shrink-0"
             >
-              <Film className="w-4 h-4 text-[#00F0FF]" />
-              <span>Watch YouTube Gameplay</span>
+              <Film className="w-4 h-4 text-[#EAB308]" />
+              <span>{t('hero.ctaGameplay')}</span>
             </a>
 
             <a
               href="/sitemap.xml"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-slate-200 hover:text-[#FACC15] transition-colors whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-neutral-200 bg-[#0A0A0A] border border-[#262626] hover:border-[#EAB308] transition-colors whitespace-nowrap shrink-0"
             >
-              <Code2 className="w-4 h-4 text-[#FF2A85]" />
-              <span>Open Live sitemap.xml</span>
+              <Code2 className="w-4 h-4 text-[#EAB308]" />
+              <span>{t('hero.ctaSitemap')}</span>
             </a>
           </div>
         </div>
 
         {/* Dedicated Section Switcher & Explicit Non-Affiliation Bar */}
-        <div className="relative z-10 bg-[#09020E]/95 border-t border-white/15 px-6 py-3.5">
+        <div className="relative z-10 bg-[#0A0A0A] border-t border-[#262626] px-6 py-3.5">
           <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
-            {/* Interactive Section Switcher for instant navigation between Main Content, Mods, and Credits */}
             <div
               role="group"
               aria-label="Switch active section view"
-              className="flex flex-wrap items-center gap-1 bg-[#140421] p-1 rounded-lg border border-white/10"
+              className="flex flex-wrap items-center gap-1 bg-[#121212] p-1 border border-[#262626]"
             >
               {(
                 [
-                  { id: 'all', label: 'All Sections' },
-                  { id: 'mods', label: 'Mods' },
-                  { id: 'official', label: 'Official 4K Media' },
-                  { id: 'credits', label: 'Credits' },
-                  { id: 'gameplay', label: 'Gameplay' },
-                  { id: 'sitemap', label: 'Sitemap.xml' },
+                  { id: 'all', label: t('hero.tabAll') },
+                  { id: 'mods', label: t('hero.tabMods') },
+                  { id: 'official', label: t('hero.tabOfficial') },
+                  { id: 'credits', label: t('hero.tabCredits') },
+                  { id: 'gameplay', label: t('hero.tabGameplay') },
+                  { id: 'sitemap', label: t('hero.tabSitemap') },
                 ] as { id: ActiveSectionView; label: string }[]
               ).map((tab) => {
                 const active = activeView === tab.id;
@@ -233,11 +251,20 @@ export function HeroSection({
                   <button
                     key={tab.id}
                     type="button"
-                    onClick={() => onSelectView(tab.id, tab.id === 'all' ? undefined : tab.id === 'official' ? 'official-gallery' : tab.id)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                    onClick={() =>
+                      onSelectView(
+                        tab.id,
+                        tab.id === 'all'
+                          ? undefined
+                          : tab.id === 'official'
+                          ? 'official-gallery'
+                          : tab.id
+                      )
+                    }
+                    className={`px-3 py-1.5 text-xs font-mono transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                       active
-                        ? 'bg-[#FF2A85] text-white font-semibold'
-                        : 'text-slate-300 hover:text-white hover:bg-white/5'
+                        ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
+                        : 'text-neutral-300 hover:text-white'
                     }`}
                   >
                     {tab.label}
@@ -246,13 +273,9 @@ export function HeroSection({
               })}
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-slate-300">
-              <ShieldAlert className="w-4 h-4 text-[#FACC15] shrink-0" />
-              <span>
-                <strong>Unofficial Fan Hub:</strong> Not affiliated with Rockstar Games, Take-Two
-                Interactive, or Grand Theft Auto VI (GTA 6).
-              </span>
-              <Layers className="w-3.5 h-3.5 text-[#00F0FF] ml-2 shrink-0" />
+            <div className="flex items-center gap-2 text-xs text-neutral-300">
+              <ShieldAlert className="w-4 h-4 text-[#EAB308] shrink-0" />
+              <span>{t('hero.disclaimer')}</span>
             </div>
           </div>
         </div>

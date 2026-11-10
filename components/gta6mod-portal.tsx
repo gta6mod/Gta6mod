@@ -13,6 +13,7 @@ import {
   ModSubmissionInput,
   SitemapUrlEntry,
 } from '@/lib/types';
+import { PortalViewState, transitionPortalView } from '@/lib/state-machines';
 import { ActiveSectionView, HeroSection } from './hero-section';
 import { ModsDirectorySection } from './mods-directory-section';
 import { RockstarOfficialGallerySection } from './rockstar-official-gallery-section';
@@ -20,18 +21,23 @@ import { GameplayYoutubeSection } from './gameplay-youtube-section';
 import { CreditsAndSitemapSection } from './credits-and-sitemap-section';
 
 export function Gta6modPortal() {
-  const [activeView, setActiveView] = useState<ActiveSectionView>('all');
+  const [viewState, setViewState] = useState<PortalViewState>({
+    status: 'viewing_all',
+    activeView: 'all',
+  });
   const [mods, setMods] = useState<ModItem[]>(INITIAL_MODS);
   const [queuedModIds, setQueuedModIds] = useState<string[]>([
     'mod-vice-rtgi-ultra',
   ]);
   const [credits, setCredits] = useState<CreatorCredit[]>(INITIAL_CREDITS);
   const [sitemapEntries, setSitemapEntries] = useState<SitemapUrlEntry[]>(() =>
-    generateCatalogSitemapEntries('https://gta6mod.community', 2500)
+    generateCatalogSitemapEntries('https://gta6mod.github.io/Gta6mod', 2500)
   );
 
   const handleSelectView = (view: ActiveSectionView, targetId?: string) => {
-    setActiveView(view);
+    setViewState((prev) =>
+      transitionPortalView(prev, { type: 'SELECT_VIEW', view, targetId })
+    );
     if (targetId) {
       setTimeout(() => {
         const el = document.getElementById(targetId);
@@ -51,7 +57,7 @@ export function Gta6modPortal() {
   const handleAddModAndCredit = async (input: ModSubmissionInput) => {
     const { mod, credit, sitemapEntry } = buildDynamicModAndSitemapObjects(
       input,
-      'https://gta6mod.community'
+      'https://gta6mod.github.io/Gta6mod'
     );
 
     setMods((prev) => [mod, ...prev.filter((m) => m.slug !== mod.slug)]);
@@ -72,6 +78,7 @@ export function Gta6modPortal() {
     }
   };
 
+  const activeView = viewState.activeView;
   const showMods = activeView === 'all' || activeView === 'mods';
   const showOfficial = activeView === 'all' || activeView === 'official';
   const showGameplay = activeView === 'all' || activeView === 'gameplay';
@@ -79,7 +86,7 @@ export function Gta6modPortal() {
   const showSitemap = activeView === 'all' || activeView === 'sitemap';
 
   return (
-    <main className="min-h-screen flex flex-col bg-[#09020E]">
+    <main className="min-h-screen flex flex-col bg-[#0A0A0A]">
       <HeroSection
         totalIndexedUrls={sitemapEntries.length}
         totalModsCount={mods.length}

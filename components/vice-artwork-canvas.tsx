@@ -40,7 +40,7 @@ export function ViceArtworkCanvas({
 
   return (
     <div
-      className={`${positionClass} overflow-hidden bg-gradient-to-br from-[#2A0845] via-[#9B177E] to-[#09020E] ${className}`}
+      className={`${positionClass} overflow-hidden bg-[#0A0A0A] ${className}`}
       aria-label={label || `${theme} artwork`}
     >
       {!imgError && resolvedImage ? (
@@ -63,12 +63,10 @@ export function ViceArtworkCanvas({
         </svg>
       )}
 
-      {/* Measured contrast scrim for high-contrast GTA 6 neon readability */}
+      {/* Flat high-contrast scrim for brutalist legibility while keeping game photos clear */}
       <div
         className={`absolute inset-0 pointer-events-none ${
-          theme === 'hero-vista'
-            ? 'bg-gradient-to-t from-[#09020E] via-[#12031E]/75 to-[#09020E]/55'
-            : 'bg-gradient-to-t from-[#0B0212]/90 via-[#0B0212]/25 to-transparent'
+          theme === 'hero-vista' ? 'bg-black/75' : 'bg-black/35'
         }`}
       />
     </div>

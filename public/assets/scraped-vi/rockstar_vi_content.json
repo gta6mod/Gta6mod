@@ -1,0 +1,924 @@
+{
+  "site_title": "Grand Theft Auto VI - Rockstar Games",
+  "url": "https://www.rockstargames.com/VI",
+  "meta": {
+    "title": "Grand Theft Auto VI - Rockstar Games",
+    "description": "Vice City, USA. Jason and Lucia have always known the deck is stacked against them. But when an easy score goes wrong, they find themselves on the darkest side of the sunniest place in America, in the middle of a criminal conspiracy stretching across the state of Leonida — forced to rely on each other more than ever if they want to make it out alive.",
+    "og_image": "https://www.rockstargames.com/VI/_next/static/media/meta.0t8ty~nlmxq2s.jpg?0o4xM8kDYYM3NFKzWF5OT",
+    "twitter_image": "https://www.rockstargames.com/VI/_next/static/media/meta.0t8ty~nlmxq2s.jpg?0o4xM8kDYYM3NFKzWF5OT",
+    "theme_color": "#000000"
+  },
+  "announcements": [
+    "Coming November 19, 2026",
+    "Pre-Load Grand Theft Auto VI Now (November 10, 2026)",
+    "Pre-Order Now for PlayStation 5 and Xbox Series X|S (Plays Best On PlayStation 5)"
+  ],
+  "game_story": {
+    "location": "Vice City, USA – Leonida State",
+    "protagonists": [
+      "Jason",
+      "Lucia"
+    ],
+    "synopsis": "Vice City, USA. Jason and Lucia have always known the deck is stacked against them. But when an easy score goes wrong, they find themselves on the darkest side of the sunniest place in America, in the middle of a criminal conspiracy stretching across the state of Leonida — forced to rely on each other more than ever if they want to make it out alive."
+  },
+  "editions_and_bonuses": [
+    {
+      "name": "Ultimate Edition",
+      "description": "An exclusive collection of items threaded across all aspects of Jason and Lucia’s story."
+    },
+    {
+      "name": "Pre-order Bonus: Vintage Vice City Pack",
+      "description": "Pre-order to get unique benefits that flash back to when the neon burned brightest."
+    },
+    {
+      "name": "Collector’s Box",
+      "description": "The Vice City Collection – Premium apparel, collectibles, and more."
+    }
+  ],
+  "media_and_trailers": [
+    {
+      "title": "An Extended Look",
+      "type": "Gameplay / In-Engine Preview"
+    },
+    {
+      "title": "Launch Trailer",
+      "type": "Official Trailer"
+    },
+    {
+      "title": "Trailer 2",
+      "type": "Official Trailer"
+    },
+    {
+      "title": "Trailer 1",
+      "type": "Reveal Trailer (Dec 2023)"
+    }
+  ],
+  "features_and_highlights": [
+    {
+      "category": "Music & Radio",
+      "title": "In-Game Radio, Soundtrack, and Score",
+      "description": "Listen to the Official Score and Soundtrack, plus select in-game radio stations."
+    },
+    {
+      "category": "Screenshots",
+      "title": "The Launch Gallery",
+      "description": "Get a stunning look inside Leonida with a collection of new screenshots."
+    },
+    {
+      "category": "Downloads",
+      "title": "Media & Artwork",
+      "description": "Download and share official videos, screenshots, and more."
+    },
+    {
+      "category": "World",
+      "title": "People & Places: Only in Leonida",
+      "description": "Vice City, USA. The darkest side of the sunniest place in America."
+    }
+  ],
+  "news": [
+    {
+      "headline": "Pre-Load Grand Theft Auto VI Now",
+      "date": "November 10, 2026"
+    },
+    {
+      "headline": "Explore the Grand Theft Auto VI Launch Gallery",
+      "date": "November 5, 2026"
+    },
+    {
+      "headline": "Grand Theft Auto VI Pre-Load Begins on November 10",
+      "date": "November 3, 2026"
+    }
+  ],
+  "ratings_and_legal": {
+    "rating": "ESRB Mature 17+",
+    "content_descriptors": [
+      "Blood and Gore",
+      "Intense Violence",
+      "Mature Humor",
+      "Nudity",
+      "Strong Language",
+      "Strong Sexual Content",
+      "Use of Drugs and Alcohol",
+      "In-Game Purchases"
+    ],
+    "copyright": "Rockstar Games, Take-Two Interactive. All rights reserved."
+  },
+  "unique_scraped_images": [
+    {
+      "filename": "39ak81277255o9.0lmk9f~r~10.x.jpg",
+      "size_bytes": 375542,
+      "size_kb": 366.7,
+      "sha256": "577624cee59f89d3"
+    },
+    {
+      "filename": "89834o94713o21.04n287k6o2lh9.jpg",
+      "size_bytes": 561786,
+      "size_kb": 548.6,
+      "sha256": "73d39d8b1beacc3a"
+    },
+    {
+      "filename": "an-extended-look-mobile.0f0-3vo3w9u26.jpg",
+      "size_bytes": 188880,
+      "size_kb": 184.5,
+      "sha256": "6c8a6ed2c3cb1a14"
+    },
+    {
+      "filename": "an-extended-look.0zw.9~1j0ne~4.jpg",
+      "size_bytes": 423080,
+      "size_kb": 413.2,
+      "sha256": "c93f0698652f7555"
+    },
+    {
+      "filename": "collectorsMobile.09~60xnm5q~pr.png",
+      "size_bytes": 105706,
+      "size_kb": 103.2,
+      "sha256": "84aba1ff0287f9f7"
+    },
+    {
+      "filename": "desktop.00.5pzu2sm-z4.jpg",
+      "size_bytes": 333740,
+      "size_kb": 325.9,
+      "sha256": "fd6875b18ca6d582"
+    },
+    {
+      "filename": "desktop.0iky3x6.hl8fo.jpg",
+      "size_bytes": 322866,
+      "size_kb": 315.3,
+      "sha256": "d291a3ffba56ba57"
+    },
+    {
+      "filename": "esrb-mature.0k-tky9~eo.-3.svg",
+      "size_bytes": 5566,
+      "size_kb": 5.4,
+      "sha256": "0d86f68b631a71e6"
+    },
+    {
+      "filename": "GTAVI_Merch_PromoCard.0_k5n2lk~h9h~.jpg",
+      "size_bytes": 357638,
+      "size_kb": 349.3,
+      "sha256": "cf55d0ba1e7a6032"
+    },
+    {
+      "filename": "k4ak9okk485712.0cj_8hoskvfgy.jpg",
+      "size_bytes": 640104,
+      "size_kb": 625.1,
+      "sha256": "241719ae5fa305a2"
+    },
+    {
+      "filename": "PBOPS5_badge_h_en_GB.0mdk5n0snqy6v.svg",
+      "size_bytes": 297202,
+      "size_kb": 290.2,
+      "sha256": "6ec7e3c68dddf6c1"
+    },
+    {
+      "filename": "VINTAGE_VICE_CITY_PACK_01.05zaof7o1uz.3.jpg",
+      "size_bytes": 248926,
+      "size_kb": 243.1,
+      "sha256": "21516e2f7fdaace0"
+    }
+  ],
+  "total_photos_downloaded": 185,
+  "photos_directory": "public/assets/scraped-vi/high_res_photos",
+  "photos_list": [
+    {
+      "filename": "39ak81277255o9.0lmk9f~r~10.x.jpg",
+      "size_kb": 123.4
+    },
+    {
+      "filename": "89834o94713o21.04n287k6o2lh9.jpg",
+      "size_kb": 235.6
+    },
+    {
+      "filename": "GTAArtDeco_Bold-s.p.0yn5.wm39fg.l.woff",
+      "size_kb": 59.1
+    },
+    {
+      "filename": "GTAArtDeco_CondensedBold-s.p.0t9aeh4uj8z9q.woff",
+      "size_kb": 56.8
+    },
+    {
+      "filename": "GTAArtDeco_CondensedHeavy-s.p.0ggau.atpfhca.woff",
+      "size_kb": 55.2
+    },
+    {
+      "filename": "GTAArtDeco_Medium-s.p.0doalxf~3yos..woff",
+      "size_kb": 59.6
+    },
+    {
+      "filename": "GTAArtDeco_Regular-s.p.0imfurdf3f-dg.woff",
+      "size_kb": 58.2
+    },
+    {
+      "filename": "GTAVI_Merch_PromoCard.0_k5n2lk~h9h~.jpg",
+      "size_kb": 247.3
+    },
+    {
+      "filename": "PBOPS5_badge_h_en_GB.0mdk5n0snqy6v.svg",
+      "size_kb": 290.2
+    },
+    {
+      "filename": "VINTAGE_VICE_CITY_PACK_01.05zaof7o1uz.3.jpg",
+      "size_kb": 80.6
+    },
+    {
+      "filename": "an-extended-look-mobile.0f0-3vo3w9u26.jpg",
+      "size_kb": 131.0
+    },
+    {
+      "filename": "an-extended-look.0zw.9~1j0ne~4.jpg",
+      "size_kb": 147.1
+    },
+    {
+      "filename": "asset_095.jpg",
+      "size_kb": 59.1
+    },
+    {
+      "filename": "asset_096.jpg",
+      "size_kb": 56.8
+    },
+    {
+      "filename": "asset_097.jpg",
+      "size_kb": 55.2
+    },
+    {
+      "filename": "asset_098.jpg",
+      "size_kb": 59.6
+    },
+    {
+      "filename": "asset_099.jpg",
+      "size_kb": 58.2
+    },
+    {
+      "filename": "asset_100.jpg",
+      "size_kb": 891.7
+    },
+    {
+      "filename": "asset_101.jpg",
+      "size_kb": 1034.0
+    },
+    {
+      "filename": "asset_102.jpg",
+      "size_kb": 605.7
+    },
+    {
+      "filename": "asset_103.jpg",
+      "size_kb": 387.6
+    },
+    {
+      "filename": "asset_104.jpg",
+      "size_kb": 456.5
+    },
+    {
+      "filename": "asset_105.jpg",
+      "size_kb": 352.5
+    },
+    {
+      "filename": "asset_106.jpg",
+      "size_kb": 896.5
+    },
+    {
+      "filename": "asset_107.jpg",
+      "size_kb": 1158.1
+    },
+    {
+      "filename": "asset_108.jpg",
+      "size_kb": 658.0
+    },
+    {
+      "filename": "asset_109.jpg",
+      "size_kb": 850.3
+    },
+    {
+      "filename": "asset_110.jpg",
+      "size_kb": 164.1
+    },
+    {
+      "filename": "asset_111.jpg",
+      "size_kb": 319.7
+    },
+    {
+      "filename": "asset_112.jpg",
+      "size_kb": 855.3
+    },
+    {
+      "filename": "asset_113.jpg",
+      "size_kb": 1066.4
+    },
+    {
+      "filename": "asset_114.jpg",
+      "size_kb": 148.1
+    },
+    {
+      "filename": "asset_115.jpg",
+      "size_kb": 82.0
+    },
+    {
+      "filename": "asset_116.jpg",
+      "size_kb": 720.0
+    },
+    {
+      "filename": "asset_117.jpg",
+      "size_kb": 110.7
+    },
+    {
+      "filename": "asset_118.jpg",
+      "size_kb": 122.1
+    },
+    {
+      "filename": "asset_119.jpg",
+      "size_kb": 131.4
+    },
+    {
+      "filename": "asset_120.jpg",
+      "size_kb": 120.4
+    },
+    {
+      "filename": "asset_121.jpg",
+      "size_kb": 72.2
+    },
+    {
+      "filename": "asset_122.jpg",
+      "size_kb": 120.3
+    },
+    {
+      "filename": "asset_123.jpg",
+      "size_kb": 117.0
+    },
+    {
+      "filename": "asset_124.jpg",
+      "size_kb": 13.0
+    },
+    {
+      "filename": "asset_125.jpg",
+      "size_kb": 196.5
+    },
+    {
+      "filename": "asset_126.jpg",
+      "size_kb": 43.2
+    },
+    {
+      "filename": "asset_127.jpg",
+      "size_kb": 310.7
+    },
+    {
+      "filename": "asset_128.jpg",
+      "size_kb": 1730.5
+    },
+    {
+      "filename": "asset_129.jpg",
+      "size_kb": 1820.5
+    },
+    {
+      "filename": "asset_130.jpg",
+      "size_kb": 1456.8
+    },
+    {
+      "filename": "asset_131.jpg",
+      "size_kb": 629.1
+    },
+    {
+      "filename": "asset_132.jpg",
+      "size_kb": 290.2
+    },
+    {
+      "filename": "asset_133.jpg",
+      "size_kb": 1849.8
+    },
+    {
+      "filename": "asset_134.jpg",
+      "size_kb": 1303.2
+    },
+    {
+      "filename": "asset_135.jpg",
+      "size_kb": 1638.6
+    },
+    {
+      "filename": "asset_136.jpg",
+      "size_kb": 905.8
+    },
+    {
+      "filename": "asset_137.jpg",
+      "size_kb": 1047.1
+    },
+    {
+      "filename": "asset_138.jpg",
+      "size_kb": 1848.2
+    },
+    {
+      "filename": "asset_139.jpg",
+      "size_kb": 1242.6
+    },
+    {
+      "filename": "asset_140.jpg",
+      "size_kb": 1653.4
+    },
+    {
+      "filename": "asset_141.jpg",
+      "size_kb": 1879.1
+    },
+    {
+      "filename": "asset_142.jpg",
+      "size_kb": 1901.1
+    },
+    {
+      "filename": "asset_143.jpg",
+      "size_kb": 1486.2
+    },
+    {
+      "filename": "asset_144.jpg",
+      "size_kb": 1807.9
+    },
+    {
+      "filename": "asset_145.jpg",
+      "size_kb": 1886.7
+    },
+    {
+      "filename": "asset_146.jpg",
+      "size_kb": 1558.0
+    },
+    {
+      "filename": "asset_147.jpg",
+      "size_kb": 1452.5
+    },
+    {
+      "filename": "asset_148.jpg",
+      "size_kb": 1168.6
+    },
+    {
+      "filename": "asset_149.jpg",
+      "size_kb": 1113.7
+    },
+    {
+      "filename": "asset_150.jpg",
+      "size_kb": 1903.6
+    },
+    {
+      "filename": "asset_151.jpg",
+      "size_kb": 1467.9
+    },
+    {
+      "filename": "asset_152.jpg",
+      "size_kb": 1241.3
+    },
+    {
+      "filename": "asset_153.jpg",
+      "size_kb": 1852.0
+    },
+    {
+      "filename": "asset_154.jpg",
+      "size_kb": 1728.1
+    },
+    {
+      "filename": "asset_155.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_156.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_157.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_158.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_159.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_160.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_161.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_162.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_163.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_164.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_165.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_166.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_167.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_168.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_169.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_170.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_171.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_172.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_173.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_174.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_175.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_176.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_177.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_178.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_179.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_180.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_181.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_182.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_183.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_184.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_185.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_186.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "asset_188.jpg",
+      "size_kb": 0.0
+    },
+    {
+      "filename": "collectorsMobile.09~60xnm5q~pr.png",
+      "size_kb": 82.1
+    },
+    {
+      "filename": "desktop.00.5pzu2sm-z4.jpg",
+      "size_kb": 145.6
+    },
+    {
+      "filename": "desktop.0iky3x6.hl8fo.jpg",
+      "size_kb": 109.1
+    },
+    {
+      "filename": "esrb-mature.0k-tky9~eo.-3.svg",
+      "size_kb": 5.4
+    },
+    {
+      "filename": "k4ak9okk485712.0cj_8hoskvfgy.jpg",
+      "size_kb": 241.1
+    },
+    {
+      "filename": "launch-trailer.0cq1gbt4507ty.jpg",
+      "size_kb": 136.9
+    },
+    {
+      "filename": "logo_gta.0-hc15s02t_zg.png",
+      "size_kb": 9.0
+    },
+    {
+      "filename": "logo_gta.0_~y3s2ni8fbj.png",
+      "size_kb": 8.9
+    },
+    {
+      "filename": "logo_gta.0h_86ilgw96eh.png",
+      "size_kb": 12.8
+    },
+    {
+      "filename": "logo_gta.15y_v-277p.w2.png",
+      "size_kb": 14.5
+    },
+    {
+      "filename": "logo_vi.02gnpy7k4ozcz.png",
+      "size_kb": 13.7
+    },
+    {
+      "filename": "logo_vi.10u0n9vp0yvf9.png",
+      "size_kb": 30.2
+    },
+    {
+      "filename": "logo_vi.13u0vs8.9roug.png",
+      "size_kb": 26.8
+    },
+    {
+      "filename": "logo_vi.18a24uqvz-izs.png",
+      "size_kb": 17.3
+    },
+    {
+      "filename": "mediaDesktop.11iioep6d3wsf.jpg",
+      "size_kb": 52.5
+    },
+    {
+      "filename": "mediaMobile.0p_yfitphljim.jpg",
+      "size_kb": 52.5
+    },
+    {
+      "filename": "meta.0t8ty~nlmxq2s.jpg",
+      "size_kb": 844.6
+    },
+    {
+      "filename": "mobile.0mi46.hy2kwfa.jpg",
+      "size_kb": 77.6
+    },
+    {
+      "filename": "mobile.0xsc-b1pnezup.jpg",
+      "size_kb": 56.3
+    },
+    {
+      "filename": "musicDesktop.0zwcbzhynnsc-.jpg",
+      "size_kb": 123.9
+    },
+    {
+      "filename": "musicMobile.16pdg34v6lit..jpg",
+      "size_kb": 102.0
+    },
+    {
+      "filename": "onlyInLeonidaDesktop.15y2n40f3axwo.jpg",
+      "size_kb": 80.4
+    },
+    {
+      "filename": "onlyInLeonidaMobile.0mupfnk-x6x~r.jpg",
+      "size_kb": 96.8
+    },
+    {
+      "filename": "poster_full.02ig6s_80ei58.jpg",
+      "size_kb": 426.2
+    },
+    {
+      "filename": "poster_full.0az_iud2g3y4j.jpg",
+      "size_kb": 426.1
+    },
+    {
+      "filename": "poster_full.10y8e6nwjx9t5.jpg",
+      "size_kb": 350.6
+    },
+    {
+      "filename": "poster_full.17aay~zardo52.jpg",
+      "size_kb": 352.2
+    },
+    {
+      "filename": "poster_logo.0c1t44bwef8fc.png",
+      "size_kb": 30.9
+    },
+    {
+      "filename": "poster_logo.0gjrky9to8luz.png",
+      "size_kb": 28.1
+    },
+    {
+      "filename": "poster_logo.0m-7c805zusl7.png",
+      "size_kb": 15.3
+    },
+    {
+      "filename": "poster_logo.0~yg584tkwg3c.png",
+      "size_kb": 18.4
+    },
+    {
+      "filename": "pre-load-mobile.0w0e-.3-xgjgh.jpg",
+      "size_kb": 211.6
+    },
+    {
+      "filename": "pre-load.0~7aq~08y784d.jpg",
+      "size_kb": 211.5
+    },
+    {
+      "filename": "screenshotsDesktop.0q9.0q677hl7h.jpg",
+      "size_kb": 42.0
+    },
+    {
+      "filename": "screenshotsMobile.01nsldjqbta4u.jpg",
+      "size_kb": 41.9
+    },
+    {
+      "filename": "shard0.01exo44atm7cd.png",
+      "size_kb": 36.2
+    },
+    {
+      "filename": "shard0.05mjizbf5hj_f.png",
+      "size_kb": 27.7
+    },
+    {
+      "filename": "shard0.0_vm6ya9-h67x.png",
+      "size_kb": 33.4
+    },
+    {
+      "filename": "shard0.11lnxwt4mejxh.png",
+      "size_kb": 35.0
+    },
+    {
+      "filename": "shard1.0.hwj_d2mxudo.png",
+      "size_kb": 54.5
+    },
+    {
+      "filename": "shard1.0h5bjmed~rogs.png",
+      "size_kb": 59.7
+    },
+    {
+      "filename": "shard1.0ufvv8f9v-a_d.png",
+      "size_kb": 46.9
+    },
+    {
+      "filename": "shard1.14.-n-5n.4nws.png",
+      "size_kb": 51.3
+    },
+    {
+      "filename": "shard2.02tu.k5d91y8j.png",
+      "size_kb": 44.8
+    },
+    {
+      "filename": "shard2.05al8-ha_.0q1.png",
+      "size_kb": 29.3
+    },
+    {
+      "filename": "shard2.0cz~6hyuvvu7e.png",
+      "size_kb": 46.3
+    },
+    {
+      "filename": "shard2.0n4e6vntuoxgf.png",
+      "size_kb": 37.6
+    },
+    {
+      "filename": "shard3.0.e.god-.dely.png",
+      "size_kb": 68.7
+    },
+    {
+      "filename": "shard3.0ip~4n1dqh9g2.png",
+      "size_kb": 42.1
+    },
+    {
+      "filename": "shard3.0y38t1xx7h_-9.png",
+      "size_kb": 73.8
+    },
+    {
+      "filename": "shard3.120i1.3ll3tb9.png",
+      "size_kb": 51.5
+    },
+    {
+      "filename": "shard4.0bi8cg9mdh8p4.png",
+      "size_kb": 57.0
+    },
+    {
+      "filename": "shard4.0c84culhxxr-b.png",
+      "size_kb": 45.5
+    },
+    {
+      "filename": "shard4.0edkjt_ym7e7w.png",
+      "size_kb": 61.4
+    },
+    {
+      "filename": "shard4.0~hgfhi.pv~z3.png",
+      "size_kb": 59.8
+    },
+    {
+      "filename": "shard5.0gq2hznxe6wx5.png",
+      "size_kb": 42.7
+    },
+    {
+      "filename": "shard5.0qdavlhu9vx3m.png",
+      "size_kb": 42.3
+    },
+    {
+      "filename": "shard5.0sr0ukcy.u788.png",
+      "size_kb": 36.1
+    },
+    {
+      "filename": "shard5.162kl1_q4xwlo.png",
+      "size_kb": 45.5
+    },
+    {
+      "filename": "shard6.0f-n3-o5~pxv3.png",
+      "size_kb": 41.1
+    },
+    {
+      "filename": "shard6.0ir_.4rvxg_vg.png",
+      "size_kb": 26.0
+    },
+    {
+      "filename": "shard6.0m27xv.6a~.pk.png",
+      "size_kb": 36.4
+    },
+    {
+      "filename": "shard6.14ufb5zbccu97.png",
+      "size_kb": 41.4
+    },
+    {
+      "filename": "shard7.0d.nm6xf4nap7.png",
+      "size_kb": 51.5
+    },
+    {
+      "filename": "shard7.0gfmb1xwz6fg9.png",
+      "size_kb": 39.7
+    },
+    {
+      "filename": "shard7.0r3-p5yp386ao.png",
+      "size_kb": 51.6
+    },
+    {
+      "filename": "shard7.14hfi0gfry4sd.png",
+      "size_kb": 36.3
+    },
+    {
+      "filename": "shard8.0-8ntmv6fr3hm.png",
+      "size_kb": 35.0
+    },
+    {
+      "filename": "shard8.0-nawcceg2vqw.png",
+      "size_kb": 46.2
+    },
+    {
+      "filename": "shard8.0l9y_pmj~t8yt.png",
+      "size_kb": 36.1
+    },
+    {
+      "filename": "shard8.124~7c3nj3ol6.png",
+      "size_kb": 37.8
+    },
+    {
+      "filename": "shard9.08p7clh5_sa.q.png",
+      "size_kb": 8.7
+    },
+    {
+      "filename": "shard9.0b3k-o-v-u8rm.png",
+      "size_kb": 4.1
+    },
+    {
+      "filename": "shard9.0jh6qrro1q9gf.png",
+      "size_kb": 3.1
+    },
+    {
+      "filename": "shard9.16r1_.qnn633v.png",
+      "size_kb": 4.5
+    },
+    {
+      "filename": "trailer-1.06b6paykx247w.jpg",
+      "size_kb": 120.0
+    },
+    {
+      "filename": "trailer-2.0l.7aqib91fz6.jpg",
+      "size_kb": 158.7
+    },
+    {
+      "filename": "ultimate_desktop_en_us.0~shc~hnjifzu.jpg",
+      "size_kb": 170.7
+    },
+    {
+      "filename": "ultimate_mobile_en_us.03~7e7tlo4k4r.jpg",
+      "size_kb": 123.6
+    },
+    {
+      "filename": "vi.0hxa9~pf214xe.png",
+      "size_kb": 14.2
+    }
+  ]
+}

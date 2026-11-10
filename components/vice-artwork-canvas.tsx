@@ -1,0 +1,76 @@
+'use client';
+
+import React, { useState } from 'react';
+import { OFFICIAL_VI_ASSETS } from '@/lib/mods-repository';
+import { withBasePath } from '@/lib/utils';
+
+interface ViceArtworkProps {
+  theme:
+    | 'muscle-car'
+    | 'neon-skyline'
+    | 'vice-beach'
+    | 'ocean-drive'
+    | 'everglades'
+    | 'penthouse'
+    | 'hero-vista';
+  imageUrl?: string;
+  className?: string;
+  label?: string;
+}
+
+const THEME_IMAGE_MAP: Record<ViceArtworkProps['theme'], string> = {
+  'hero-vista': OFFICIAL_VI_ASSETS.heroPoster,
+  'muscle-car': OFFICIAL_VI_ASSETS.screenshots4k[1].url,
+  'neon-skyline': OFFICIAL_VI_ASSETS.screenshots4k[2].url,
+  'vice-beach': OFFICIAL_VI_ASSETS.screenshots4k[0].url,
+  'ocean-drive': OFFICIAL_VI_ASSETS.screenshots4k[2].url,
+  everglades: OFFICIAL_VI_ASSETS.screenshots4k[5].url,
+  penthouse: OFFICIAL_VI_ASSETS.screenshots4k[3].url,
+};
+
+export function ViceArtworkCanvas({
+  theme,
+  imageUrl,
+  className = '',
+  label,
+}: ViceArtworkProps) {
+  const [imgError, setImgError] = useState(false);
+  const positionClass = className.includes('absolute') ? '' : 'relative';
+  const resolvedImage = imageUrl || THEME_IMAGE_MAP[theme];
+
+  return (
+    <div
+      className={`${positionClass} overflow-hidden bg-gradient-to-br from-[#2A0845] via-[#9B177E] to-[#09020E] ${className}`}
+      aria-label={label || `${theme} artwork`}
+    >
+      {!imgError && resolvedImage ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={withBasePath(resolvedImage)}
+          alt={label || 'Vice City GTA 6 Mod Visual'}
+          referrerPolicy="no-referrer"
+          onError={() => setImgError(true)}
+          className="w-full h-full object-cover object-center"
+        />
+      ) : (
+        <svg
+          viewBox="0 0 800 450"
+          className="w-full h-full object-cover"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <circle cx="400" cy="210" r="130" fill="#FACC15" opacity="0.75" />
+          <rect x="0" y="320" width="800" height="130" fill="#09020E" />
+        </svg>
+      )}
+
+      {/* Measured contrast scrim for high-contrast GTA 6 neon readability */}
+      <div
+        className={`absolute inset-0 pointer-events-none ${
+          theme === 'hero-vista'
+            ? 'bg-gradient-to-t from-[#09020E] via-[#12031E]/75 to-[#09020E]/55'
+            : 'bg-gradient-to-t from-[#0B0212]/90 via-[#0B0212]/25 to-transparent'
+        }`}
+      />
+    </div>
+  );
+}

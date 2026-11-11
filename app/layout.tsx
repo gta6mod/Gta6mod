@@ -44,9 +44,6 @@ export const metadata: Metadata = {
     'max-snippet': -1,
     'max-video-preview': -1,
   },
-  verification: {
-    google: 'nqZDI1cO_8ojuxdvI8pGJM-XNcLLcQHBkO4FmQpczdE',
-  },
   openGraph: {
     title: 'Gta6mod – Vice City Mods Directory, Gameplay & Credits',
     description:

@@ -8,7 +8,7 @@ import { ModsDirectorySection } from '@/components/mods-directory-section';
 export const metadata: Metadata = {
   title: 'Mods Directory & Technical Packages | Gta6mod',
   description:
-    'Browse verified GTA 6 Vice City shaders, widebody vehicle packs, open-interior estates, and C# physics scripts indexed in the Gta6mod repository.',
+    'Browse GTA 6 Vice City mods, graphics shaders, vehicle packs, map expansions, characters, and gameplay scripts.',
   alternates: {
     canonical: '/mods/',
   },

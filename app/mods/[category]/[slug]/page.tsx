@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft, Download, ExternalLink, FileCode, ShieldAlert } from 'lucide-react';
 import { INITIAL_MODS, GENERATED_VI_ASSETS } from '@/lib/mods-repository';
@@ -10,6 +11,34 @@ interface ModPageProps {
     category: string;
     slug: string;
   }>;
+}
+
+export async function generateMetadata({ params }: ModPageProps): Promise<Metadata> {
+  const { category, slug } = await params;
+  const dynamicStore = readDynamicStore();
+  const matchedMod = [...dynamicStore.mods, ...INITIAL_MODS].find((mod) => mod.slug === slug);
+  const title =
+    matchedMod?.title ||
+    slug
+      .split('-')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  const description =
+    matchedMod?.summary ||
+    `Explore the ${category.replaceAll('-', ' ')} mod "${title}" in the Gta6mod GTA 6 Vice City directory.`;
+
+  return {
+    title: `${title} | GTA 6 Mod Directory`,
+    description,
+    alternates: {
+      canonical: `/mods/${category}/${slug}/`,
+    },
+    openGraph: {
+      title: `${title} | GTA 6 Mod Directory`,
+      description,
+      type: 'article',
+    },
+  };
 }
 
 export function generateStaticParams() {

@@ -22,21 +22,45 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://gta6mod.github.io/Gta6mod/'),
   title: 'Gta6mod – Vice City Mods Directory, Gameplay & Credits',
   description:
-    'Discover Gta6mod: high-contrast Vice City mods, vehicle packs, ray-traced shaders, curated YouTube GTA 6 gameplay videos, creator credits, and scalable XML sitemaps. Unofficial fan platform not affiliated with Rockstar Games or GTA 6.',
+    'Explore GTA 6 Vice City mods, vehicle packs, graphics shaders, gameplay videos, creator credits, and an XML sitemap on this independent fan archive.',
+  keywords: [
+    'GTA 6 mods',
+    'GTA 6 Vice City mods',
+    'GTA 6 gameplay',
+    'GTA 6 vehicle mods',
+    'GTA 6 shaders',
+    'Vice City modding',
+  ],
+  authors: [{ name: 'Gta6mod' }],
+  creator: 'Gta6mod',
+  publisher: 'Gta6mod',
+  robots: {
+    index: true,
+    follow: true,
+    'max-image-preview': 'large',
+    'max-snippet': -1,
+    'max-video-preview': -1,
+  },
+  verification: {
+    google: 'nqZDI1cO_8ojuxdvI8pGJM-XNcLLcQHBkO4FmQpczdE',
+  },
   openGraph: {
     title: 'Gta6mod – Vice City Mods Directory, Gameplay & Credits',
     description:
-      'Explore community mods, YouTube GTA 6 gameplay showcases, creator credits, and a crawler-ready multi-thousand page sitemap architecture.',
+      'Explore GTA 6 Vice City mods, gameplay showcases, creator credits, official media references, and a crawler-ready XML sitemap.',
     type: 'website',
     siteName: 'Gta6mod',
+    url: 'https://gta6mod.github.io/Gta6mod/',
+    locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Gta6mod – Vice City Mods Directory, Gameplay & Credits',
     description:
-      'Explore community mods, YouTube GTA 6 gameplay showcases, creator credits, and a crawler-ready multi-thousand page sitemap architecture.',
+      'Explore GTA 6 Vice City mods, gameplay showcases, creator credits, official media references, and an XML sitemap.',
   },
   alternates: {
     canonical: '/',
@@ -64,7 +88,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${barlowCondensed.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} dark scroll-smooth`}
     >
       <head>
-        <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+        <link
+          rel="sitemap"
+          type="application/xml"
+          title="Sitemap"
+          href="/Gta6mod/sitemap.xml"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

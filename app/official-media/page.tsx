@@ -8,7 +8,7 @@ import { RockstarOfficialGallerySection } from '@/components/rockstar-official-g
 export const metadata: Metadata = {
   title: 'Official 4K Launch Gallery & Lore Archive | Gta6mod',
   description:
-    'Inspect uncompressed 3840x2160 UHD reference captures, narrative synopsis, and official release specifications for Vice City and Leonida.',
+    'Explore a 4K GTA 6 Vice City media gallery, launch references, artwork, and Leonida lore in this independent archive.',
   alternates: {
     canonical: '/official-media/',
   },

@@ -8,7 +8,7 @@ import { GameplayYoutubeSection } from '@/components/gameplay-youtube-section';
 export const metadata: Metadata = {
   title: 'YouTube Gameplay & Engine Analysis | Gta6mod',
   description:
-    'Frame-by-frame GTA 6 trailer telemetry alongside community shader, vehicle, and map reconstruction showcases.',
+    'Watch curated GTA 6 gameplay videos and explore community analysis of shaders, vehicles, maps, and the RAGE engine.',
   alternates: {
     canonical: '/gameplay/',
   },

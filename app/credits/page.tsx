@@ -6,7 +6,7 @@ import { CreditsAndSitemapSection } from '@/components/credits-and-sitemap-secti
 export const metadata: Metadata = {
   title: 'Creator Credits & Attribution Ledger | Gta6mod',
   description:
-    'Institutional attribution registry for GTA 6 Vice City 3D vehicle modelers, RAGE 9 shader architects, script developers, and media analysts.',
+    'Browse creator credits and attribution for GTA 6 Vice City vehicle mods, shaders, scripts, media, and community projects.',
   alternates: {
     canonical: '/credits/',
   },

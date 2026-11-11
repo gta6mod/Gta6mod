@@ -1,25 +1,6 @@
 import type { Metadata } from 'next';
-import { Barlow_Condensed, Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import { LanguageProvider } from '@/components/language-provider';
 import './globals.css';
-
-const barlowCondensed = Barlow_Condensed({
-  subsets: ['latin'],
-  weight: ['600', '700'],
-  variable: '--font-display',
-});
-
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
-  variable: '--font-sans',
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '600'],
-  variable: '--font-mono',
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://gta6mod.github.io/Gta6mod/'),
@@ -82,7 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${barlowCondensed.variable} ${plusJakarta.variable} ${jetbrainsMono.variable} dark scroll-smooth`}
+      className="dark scroll-smooth"
     >
       <head>
         <link

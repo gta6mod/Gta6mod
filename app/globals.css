@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 
 @theme inline {
-  --font-display: var(--font-display), sans-serif;
-  --font-sans: var(--font-sans), sans-serif;
-  --font-mono: var(--font-mono), monospace;
+  --font-display: "Arial Narrow", Impact, sans-serif;
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: "Courier New", monospace;
 }

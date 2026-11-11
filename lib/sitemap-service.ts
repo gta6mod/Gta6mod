@@ -69,13 +69,14 @@ export function generateCatalogSitemapEntries(
     });
   }
 
-  // 1. Core Hub Pages (Shard 1)
+  // 1. Core Standalone Pages (Shard 1)
   const coreRoutes = [
-    { path: '/', priority: '1.0', freq: 'hourly' as const, title: 'Gta6mod Home & Directory' },
-    { path: '/#mods', priority: '0.9', freq: 'hourly' as const, title: 'Vice City Mods Catalog' },
-    { path: '/#gameplay', priority: '0.9', freq: 'daily' as const, title: 'YouTube GTA 6 Gameplay Hub' },
-    { path: '/#credits', priority: '0.8', freq: 'daily' as const, title: 'Creator Credits & Attribution' },
-    { path: '/#sitemap', priority: '0.7', freq: 'weekly' as const, title: 'HTML & XML Sitemap Explorer' },
+    { path: '/', priority: '1.0', freq: 'hourly' as const, title: 'Gta6mod Home & Launch Hub' },
+    { path: '/mods/', priority: '0.9', freq: 'hourly' as const, title: 'Vice City Mods Directory' },
+    { path: '/official-media/', priority: '0.9', freq: 'daily' as const, title: 'Official 4K Media & Lore Archive' },
+    { path: '/gameplay/', priority: '0.9', freq: 'daily' as const, title: 'YouTube GTA 6 Gameplay & Engine Analysis' },
+    { path: '/credits/', priority: '0.8', freq: 'daily' as const, title: 'Creator Credits & Attribution Ledger' },
+    { path: '/sitemap-explorer/', priority: '0.7', freq: 'weekly' as const, title: 'Multi-Shard XML Sitemap Inspector' },
   ];
 
   for (const route of coreRoutes) {

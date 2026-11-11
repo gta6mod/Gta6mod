@@ -1,285 +1,181 @@
 'use client';
 
-import React from 'react';
-import { ArrowRight, Camera, Code2, Database, Film, Globe, ShieldAlert, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { ArrowUpRight, Camera, FileCode, Film, Layers, Terminal, Users } from 'lucide-react';
 import { useI18n } from './language-provider';
-import { LocaleCode } from '@/lib/types';
 import { ViceArtworkCanvas } from './vice-artwork-canvas';
+import { SiteHeader } from './site-header';
+import { ContentLockerModal, StartGameModButton } from './content-locker-modal';
 
 export type ActiveSectionView = 'all' | 'mods' | 'official' | 'credits' | 'gameplay' | 'sitemap';
 
 interface HeroSectionProps {
   totalIndexedUrls: number;
   totalModsCount: number;
-  activeView: ActiveSectionView;
-  onSelectView: (view: ActiveSectionView, targetId?: string) => void;
+  activeView?: ActiveSectionView;
+  onSelectView?: (view: ActiveSectionView, targetId?: string) => void;
+  onOpenLocker?: (packageTitle?: string) => void;
 }
 
 export function HeroSection({
   totalIndexedUrls,
   totalModsCount,
-  activeView,
-  onSelectView,
+  onOpenLocker,
 }: HeroSectionProps) {
-  const { locale, languages, setLocale, t } = useI18n();
-  const enabledLanguages = languages.filter((l) => l.enabled);
+  const { t } = useI18n();
+  const [lockerOpen, setLockerOpen] = useState(false);
+
+  const handleStartMod = () => {
+    if (onOpenLocker) {
+      onOpenLocker('GTA VI — VICE CITY CORE MOD PACKAGE');
+    } else {
+      setLockerOpen(true);
+    }
+  };
+
+  const directoryRoutes = [
+    {
+      href: '/mods',
+      code: '01 // DIRECTORY',
+      title: t('nav.mods'),
+      meta: `${totalModsCount} VERIFIED PACKAGES`,
+      desc: 'Shader presets, widebody vehicle rigs, map interiors, and C# physics scripts.',
+      icon: Layers,
+    },
+    {
+      href: '/official-media',
+      code: '02 // REFERENCE',
+      title: t('nav.official'),
+      meta: '3840x2160 UHD',
+      desc: 'Uncompressed 4K reference captures, edition specs, and Leonida lore archive.',
+      icon: Camera,
+    },
+    {
+      href: '/gameplay',
+      code: '03 // TELEMETRY',
+      title: t('nav.gameplay'),
+      meta: '60 FPS ANALYSIS',
+      desc: 'Frame-by-frame trailer breakdowns and community engine reconstruction feeds.',
+      icon: Film,
+    },
+    {
+      href: '/credits',
+      code: '04 // LEDGER',
+      title: t('nav.credits'),
+      meta: 'OPEN ATTRIBUTION',
+      desc: 'Creator attribution registry and direct repository package submission terminal.',
+      icon: Users,
+    },
+    {
+      href: '/sitemap-explorer',
+      code: '05 // CRAWLER XML',
+      title: t('nav.sitemap'),
+      meta: `${totalIndexedUrls.toLocaleString()} URLS`,
+      desc: 'Multi-shard XML 0.9 index architecture for search engine discovery.',
+      icon: FileCode,
+    },
+  ];
 
   return (
-    <div className="relative border-b border-[#262626] bg-[#0A0A0A]">
-      {/* Top Navigation Bar: Strict 3-Zone Contract */}
-      <header className="sticky top-0 z-40 flex items-center justify-between gap-6 px-6 lg:px-12 py-4 bg-[#0A0A0A] border-b border-[#262626]">
-        {/* Zone 1: Single text element wordmark */}
-        <a
-          href="#top"
-          onClick={() => onSelectView('all', 'top')}
-          className="font-display text-2xl font-bold tracking-wider text-white hover:text-[#FACC15] transition-colors whitespace-nowrap shrink-0"
-        >
-          Gta6mod
-        </a>
+    <div className="bg-[#0A0A0A] border-b border-[#262626]">
+      <SiteHeader onOpenLocker={handleStartMod} />
 
-        {/* Zone 2: 4-5 concise single-line text navigation links */}
-        <nav
-          aria-label="Primary Navigation"
-          className="hidden md:flex items-center gap-7 text-sm font-medium text-slate-200"
-        >
-          <a
-            href="#mods"
-            onClick={() => onSelectView('all', 'mods')}
-            className="hover:text-[#EAB308] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
-          >
-            {t('nav.mods')}
-          </a>
-          <a
-            href="#official-gallery"
-            onClick={() => onSelectView('all', 'official-gallery')}
-            className="hover:text-[#EAB308] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
-          >
-            {t('nav.official')}
-          </a>
-          <a
-            href="#gameplay"
-            onClick={() => onSelectView('all', 'gameplay')}
-            className="hover:text-[#EAB308] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
-          >
-            {t('nav.gameplay')}
-          </a>
-          <a
-            href="#credits"
-            onClick={() => onSelectView('all', 'credits')}
-            className="hover:text-[#EAB308] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
-          >
-            {t('nav.credits')}
-          </a>
-          <a
-            href="#sitemap"
-            onClick={() => onSelectView('all', 'sitemap')}
-            className="hover:text-[#EAB308] hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
-          >
-            {t('nav.sitemap')}
-          </a>
-        </nav>
-
-        {/* Zone 3: Language Switcher + Admin + Primary Action */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div
-            role="group"
-            aria-label="Language selector"
-            className="inline-flex items-center border border-[#262626] bg-[#121212]"
-          >
-            <Globe className="w-3.5 h-3.5 text-neutral-400 ml-2 mr-1 shrink-0" />
-            {enabledLanguages.map((lang) => {
-              const isCurrent = locale === lang.code;
-              return (
-                <button
-                  key={lang.code}
-                  type="button"
-                  onClick={() => setLocale(lang.code as LocaleCode)}
-                  className={`px-2 py-1.5 text-[11px] font-mono uppercase transition-colors cursor-pointer ${
-                    isCurrent
-                      ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
-                      : 'text-neutral-300 hover:text-white'
-                  }`}
-                >
-                  {lang.label}
-                </button>
-              );
-            })}
-          </div>
-
-          <button
-            type="button"
-            onClick={() => onSelectView('all', 'submit-mod')}
-            className="px-4 py-2 text-xs font-semibold text-[#0A0A0A] bg-[#EAB308] hover:bg-[#FACC15] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-          >
-            {t('nav.submitMod')}
-          </button>
-        </div>
-      </header>
-
-      {/* Hero Viewport Canvas (Inspired by rockstargames.com/VI) */}
+      {/* Brutalist Editorial Hero Viewport */}
       <section
         id="top"
-        aria-label="Hero Overview"
-        className="relative min-h-[660px] flex flex-col justify-between overflow-hidden"
+        aria-label="Hero Launch Terminal"
+        className="relative min-h-[580px] flex flex-col justify-end border-b border-[#262626] overflow-hidden"
       >
         <ViceArtworkCanvas
           theme="hero-vista"
           className="absolute inset-0 w-full h-full"
-          label="Leonida Sunset Boulevard and Muscle Car Backdrop"
+          label="Leonida Vice City Key Art Backdrop"
         />
 
-        <div className="relative z-10 max-w-[1200px] w-full mx-auto px-6 pt-16 pb-12 flex flex-col items-center text-center">
-          {/* Clean Hierarchy: Semantic Icon, Primary H1 Title, Concise 1-Line Subtitle */}
-          <Database className="w-7 h-7 text-[#EAB308] mb-4" aria-hidden="true" />
+        <div className="relative z-10 max-w-[1280px] w-full mx-auto px-6 lg:px-12 pt-20 pb-14">
+          <div className="max-w-3xl bg-[#0A0A0A] border border-[#262626] p-6 sm:p-10">
+            {/* Strict Hierarchy: Semantic Icon, Primary H1 Title, Concise 1-Line Subtitle */}
+            <Terminal className="w-6 h-6 text-[#EAB308] mb-4" aria-hidden="true" />
 
-          <h1
-            className="font-display font-bold text-[#F5F5F5] tracking-tight max-w-3xl mb-3"
-            style={{
-              fontSize: 'clamp(2.5rem, 5vw, 4.25rem)',
-              lineHeight: 1.04,
-              textWrap: 'balance',
-            }}
-          >
-            {t('hero.title')}
-          </h1>
-
-          <p className="text-sm sm:text-base text-neutral-300 max-w-2xl leading-relaxed mb-8">
-            {t('hero.subtitle')}
-          </p>
-
-          {/* Centerpiece High-Contrast Telemetry & Index Box */}
-          <div className="w-full max-w-xl bg-[#0A0A0A] border border-[#262626] p-6 mb-8">
-            <div className="flex items-center justify-between text-xs text-neutral-300 mb-4 pb-3 border-b border-[#262626]">
-              <span>{t('hero.telemetryTitle')}</span>
-              <span className="font-mono tabular-nums text-[#EAB308]">
-                /sitemap.xml · {totalIndexedUrls.toLocaleString()} URLs
-              </span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="font-display text-3xl sm:text-4xl font-bold text-[#F5F5F5] font-mono tabular-nums">
-                  {totalModsCount}
-                </div>
-                <div className="text-xs text-neutral-400 mt-1">{t('hero.statMods')}</div>
-              </div>
-              <div className="border-x border-[#262626] px-2">
-                <div className="font-display text-3xl sm:text-4xl font-bold text-[#EAB308] font-mono tabular-nums">
-                  {totalIndexedUrls.toLocaleString()}
-                </div>
-                <div className="text-xs text-neutral-400 mt-1">{t('hero.statUrls')}</div>
-              </div>
-              <div>
-                <div className="font-display text-3xl sm:text-4xl font-bold text-[#F5F5F5] font-mono tabular-nums">
-                  4K / 60
-                </div>
-                <div className="text-xs text-neutral-400 mt-1">{t('hero.statVideo')}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Primary Action & Quick Section Jumps */}
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => onSelectView('all', 'mods')}
-              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-[#0A0A0A] bg-[#EAB308] hover:bg-[#FACC15] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            <h1
+              className="font-display font-bold uppercase text-[#F5F5F5] tracking-tight mb-3"
+              style={{
+                fontSize: 'clamp(2.5rem, 5vw, 4.25rem)',
+                lineHeight: 1.0,
+              }}
             >
-              <span>{t('hero.ctaMods')}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+              {t('hero.title')}
+            </h1>
 
-            <button
-              type="button"
-              onClick={() => onSelectView('all', 'official-gallery')}
-              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-[#F5F5F5] bg-[#0A0A0A] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-            >
-              <Camera className="w-4 h-4 text-[#EAB308]" />
-              <span>{t('hero.ctaOfficial')}</span>
-            </button>
+            <p className="text-sm sm:text-base text-neutral-300 leading-relaxed mb-8">
+              {t('hero.subtitle')}
+            </p>
 
-            <button
-              type="button"
-              onClick={() => onSelectView('all', 'credits')}
-              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-[#F5F5F5] bg-[#0A0A0A] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-            >
-              <Users className="w-4 h-4 text-[#EAB308]" />
-              <span>{t('hero.ctaCredits')}</span>
-            </button>
+            {/* Primary Animated GTA 6 Mod Launch CTA + Secondary Directory Link */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-6 border-t border-[#262626]">
+              <StartGameModButton
+                size="lg"
+                label="START THE GAME MOD"
+                onClick={handleStartMod}
+              />
 
-            <a
-              href="#gameplay"
-              onClick={() => onSelectView('all', 'gameplay')}
-              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-[#F5F5F5] bg-[#0A0A0A] hover:border-[#EAB308] border border-[#262626] transition-colors whitespace-nowrap shrink-0"
-            >
-              <Film className="w-4 h-4 text-[#EAB308]" />
-              <span>{t('hero.ctaGameplay')}</span>
-            </a>
-
-            <a
-              href="/sitemap.xml"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 text-sm font-medium text-neutral-200 bg-[#0A0A0A] border border-[#262626] hover:border-[#EAB308] transition-colors whitespace-nowrap shrink-0"
-            >
-              <Code2 className="w-4 h-4 text-[#EAB308]" />
-              <span>{t('hero.ctaSitemap')}</span>
-            </a>
-          </div>
-        </div>
-
-        {/* Dedicated Section Switcher & Explicit Non-Affiliation Bar */}
-        <div className="relative z-10 bg-[#0A0A0A] border-t border-[#262626] px-6 py-3.5">
-          <div className="max-w-[1200px] mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
-            <div
-              role="group"
-              aria-label="Switch active section view"
-              className="flex flex-wrap items-center gap-1 bg-[#121212] p-1 border border-[#262626]"
-            >
-              {(
-                [
-                  { id: 'all', label: t('hero.tabAll') },
-                  { id: 'mods', label: t('hero.tabMods') },
-                  { id: 'official', label: t('hero.tabOfficial') },
-                  { id: 'credits', label: t('hero.tabCredits') },
-                  { id: 'gameplay', label: t('hero.tabGameplay') },
-                  { id: 'sitemap', label: t('hero.tabSitemap') },
-                ] as { id: ActiveSectionView; label: string }[]
-              ).map((tab) => {
-                const active = activeView === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() =>
-                      onSelectView(
-                        tab.id,
-                        tab.id === 'all'
-                          ? undefined
-                          : tab.id === 'official'
-                          ? 'official-gallery'
-                          : tab.id
-                      )
-                    }
-                    className={`px-3 py-1.5 text-xs font-mono transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                      active
-                        ? 'bg-[#EAB308] text-[#0A0A0A] font-semibold'
-                        : 'text-neutral-300 hover:text-white'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="flex items-center gap-2 text-xs text-neutral-300">
-              <ShieldAlert className="w-4 h-4 text-[#EAB308] shrink-0" />
-              <span>{t('hero.disclaimer')}</span>
+              <Link
+                href="/mods"
+                className="inline-flex items-center justify-between sm:justify-center gap-3 px-6 py-4 font-mono text-xs uppercase tracking-wider text-[#F5F5F5] bg-[#121212] border border-[#262626] hover:border-[#EAB308] whitespace-nowrap"
+              >
+                <span>OPEN MODS DIRECTORY</span>
+                <ArrowUpRight className="w-4 h-4 text-[#EAB308]" />
+              </Link>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Exposed 1px Grid Directory for Standalone SEO Pages */}
+      <section aria-label="Dedicated Archive Pages" className="bg-[#0A0A0A]">
+        <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-[#262626] border-x border-[#262626]">
+          {directoryRoutes.map((route) => {
+            const IconComponent = route.icon;
+            return (
+              <Link
+                key={route.href}
+                href={route.href}
+                className="p-6 bg-[#0A0A0A] hover:bg-[#121212] flex flex-col justify-between gap-6"
+              >
+                <div>
+                  <div className="flex items-center justify-between text-[11px] font-mono text-neutral-400 mb-3">
+                    <span>{route.code}</span>
+                    <IconComponent className="w-4 h-4 text-[#EAB308]" aria-hidden="true" />
+                  </div>
+                  <h2 className="font-display text-2xl font-bold uppercase tracking-wide text-[#F5F5F5] mb-1.5">
+                    {route.title}
+                  </h2>
+                  <p className="text-xs text-neutral-400 leading-relaxed">
+                    {route.desc}
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-[#262626] flex items-center justify-between text-[11px] font-mono">
+                  <span className="text-[#EAB308]">{route.meta}</span>
+                  <span className="text-[#F5F5F5] inline-flex items-center gap-1">
+                    <span>{route.href}</span>
+                    <ArrowUpRight className="w-3.5 h-3.5 text-[#EAB308]" />
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {!onOpenLocker && (
+        <ContentLockerModal
+          isOpen={lockerOpen}
+          onClose={() => setLockerOpen(false)}
+          packageTitle="GTA VI — VICE CITY CORE MOD PACKAGE"
+        />
+      )}
     </div>
   );
 }
